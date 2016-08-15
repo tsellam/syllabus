@@ -1,18 +1,18 @@
 date,slug,title,link,readings,optional,assigned,ashow,due,dshow
 ,Intro,,https://github.com/w4111/syllabus/blob/master/lectures/lec1.pdf,Chapter 1,,HW 0,1,,
-,Entity-Relationship Modeling,ER Modeling,,Chapter 2,,Project 1 Part 1. LOOK FOR TEAMMATE,1,"<a href=""http://github.com/w4111/hw0"">HW 0 10AM</a><br/>You will receive a 0 in this class if HW0 not completed on time -- no exceptions",1
+,Entity-Relationship Modeling,ER Modeling,,Chapter 2,,Project 1 Part 1. <br/>LOOK FOR TEAMMATE,1,"<a href=""http://github.com/w4111/hw0"">HW 0 10AM</a><br/>You will receive a 0 in this class if HW0 not completed on time -- no exceptions",1
 ,Entity-Relationship Modeling,"More constraints, using ER models",,Chapter 2,,,,Formed team for Project 1 (no deliverable),1
-,Relational Model,Dawn before time: non relational models.,,Chapter 3,"<a href=""./docs/goesaround.pdf"">What goes around comes around</a>",Project 1 Part 1 approval phase 9/21-9/25,1,,
-,Relational Model,ER and Relational Review.,,Chapter 3,"<a href=""./docs/goesaround.pdf"">What goes around comes around</a>",Project 1 Part 1 approval phase 9/21-9/25,1,,
-,Relational Model,Intro to Relational Algebra,,Chapter 3,Original Relational Model paper,"HW 1 due 10/5<br/>Project 1 Part 2",,Project 1 Part 1 2:40PM in class. Hard copy,
-,Relational Algebra,,,,,,,,
-,Relational Algebra,"ER to Relational, supplemental notes",,Sections 4.1 and 4.2,,Project 1 Part 2,,HW 1 2:30PM in class. Hard copy.,
-,Relational Algebra,,,,,,,,
+,Relational Model,Dawn before time: non relational models.,,Chapter 3,"<a href=""./docs/goesaround.pdf"">What goes around comes around</a>",,,,
+,Relational Model,ER and Relational Review.,,Chapter 3,"<a href=""./docs/goesaround.pdf"">What goes around comes around</a>",,,Project 1 Part 1 approval phase 9/21-9/28,1
+,Relational Model,Intro to Relational Algebra,,Chapter 3,Original Relational Model paper,HW 1,,Project 1 Part 1 approval phase 9/21-9/28,1
+,Relational Algebra,,,,,,,Project 1 Part 1 approval phase 9/21-9/28,1
+,Relational Algebra,"ER to Relational, supplemental notes",,Sections 4.1 and 4.2,,Project 1 Part 2,,Project 1 Part 1 2:40PM in class. Hard copy,
+,Relational Algebra,,,,,,,HW 1 2:30PM in class. Hard copy.,
 ,SQL,Knee deep in SQL,,Chapter 5,,HW 2,,,
-,SQL,Order by and UDFs,,Chapter 5,,Project 1 Part 2 10AM,,Project 1 Part 2 10AM,
-,SQL,"Triggers, WITH, Views.",,Chapter 5,,,,HW 2 Due 10AM.,
-,Midterm Review,,,,,,,,
-,Midterm: closed book,Cheat sheet: both sides of one half of an 8x11 page,,,,,,,
+,SQL,Order by and UDFs,,Chapter 5,,,,,
+,SQL,"Triggers, WITH, Views.",,Chapter 5,,,,Project 1 Part 2 10AM,
+,Midterm Review,,,,,,,HW 2 Due 10AM.,
+,Midterm: closed book,1/2 page cheat sheet,,,,,,,
 ,APIs,"DBAPIs, Impedance Mismatches, SQL Injection",,Chapter 6,,,,,
 ,Normalization,Redundancy and Functional Dependencies,,Chapter 19 except 19.8 (you do need to know 3NF at the level of lecture),,HW 3,,,
 ,Normalization,,,Chapter 8 (level of detail covered in class),,,,,
