@@ -1,13 +1,12 @@
 # W4111 Spring 2016 Syllabus (Section 002)
 
-See the schedule on the course web site: http://www.cs.columbia.edu/~coms4111/ejones.html
+See the schedule on the course web site: http://www.cs.columbia.edu/~coms4111/ewu.html
 
 
 Instructor
 
-* Evan Jones
-* ej@evanjones.ca
-* Office Hours: After class on Thursday
+* Eugene Wu
+* Office Hours: After class on Weds, Mudd 421
 
 
 Office hours
@@ -17,9 +16,7 @@ Office hours
 
 Textbook
 
-*  Database Management Systems 3rd Edition by Ramakrishnan and Gehrke. 
-
-(Not required but may be useful for additional detail)
+*  (Not Required) Database Management Systems 3rd Edition by Ramakrishnan and Gehrke. 
 
 
 Prerequisites
@@ -130,7 +127,7 @@ When using late days, note that homeworks tend to get harder later in the course
 
 # Communication
 
-* **(Perferred)**: [Piazza](https://piazza.com/class/ijk4fyuhr8v38q)
+* **(Perferred)**: [Piazza](https://piazza.com/class/irvic0xfdqk3p6)
 * **(Least Preferred)**: Email course staff.  There are too many people in the course for this to be a primary option!
 * Announcements will be on website and via emails using courseworks
 
