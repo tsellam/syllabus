@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html><head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- Bootstrap -->
+  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="lib/style.css" rel="stylesheet" media="screen">
+  <script src="lib/jquery.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="lib/handlebars.js"></script>
+  <script src="lib/underscore.js"></script>
+  <script src="lib/dateformat.js"></script>
+  <script src="lib/d3.js"></script>
+  <script src="lib/util.js"></script>
+
+
+  <title>4111: Introduction to Databases</title>
+</head>
+
+<script id="entry-template" type="text/x-handlebars-template">
+  {{#each days}}
+  <tr > 
+    <td > <p > <span class="date"> </span> </td> 
+    <td>
+        <div >
+          L{{math @index "+" 1}}: 
+          {{#if link}}<a href="{{link}}">{{/if}}
+            {{slug}} 
+          {{#if link}}</a>{{/if}}
+          </div>
+        <div >{{{title}}} </div>
+    </td>
+    <td style="max-width: 200px" >
+      <p > <span >{{{readings}}}</span> </p>
+      {{#if optional}}
+      <div> <div style="width:100%" class="due text-warning bg-warning">Optional</div> {{{optional}}}</div> 
+      {{/if}}
+    </td>
+    <td style="max-width: 200px;">
+      {{#if ashow}}{{{assigned}}}{{/if}}
+    </td>
+    <td style="max-width: 200px;">
+      {{#if dshow}}{{{due}}}{{/if}}
+      {{#if notes}}<div class="notes">{{{notes}}} </div><br/><br/>{{/if}}
+    </td>
+  </tr>
+  {{/each}}
+</script>
+
+
+
+<body>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-inner">
+        <a class="navbar-brand active" href="#">4111 Fall 2016 (Section 1)</a>
+        <div class="collapse navbar-collapse ">
+          <ul class="nav navbar-nav" role="tablist">
+            <li><a href="#staff">Staff</a></li>
+            <li><a href="#grading">Grading</a></li>
+            <li><a href="#links">Links</a></li>
+            <li><a href="#schedule">Schedule</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-header">
+    <h2>Introduction to Databases</h2>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2"><b>Units:</b></div>
+      <div class="col-md-8"><p>3</p></div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-2"><a id="staff" name="staff"></a><b>Instructor:</b></div>
+      <div class="col-md-8"><p><a href="http://www.eugenewu.net/">Eugene Wu</a>  Office Hours: TBA</p></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><b>Staff / Office Hours</b> </div>
+      <div class="col-md-8">
+        <p>TBA / Time TBA (loc TBA)</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2"><b>Meetings:</b></div>
+      <div class="col-md-8"><p>MW 2:40pm-3:55pm, TBA</p></div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2"><b>Description:</b></div>
+      <div class="col-md-8"> 
+        This class will introduce core database topics for building database-backed applications, such as 
+        data modeling, logical design of relational databases, relational algebra, and SQL.  
+        We will also introduce database internals such as query processing, query optimization,
+        physical database design, and transaction processing.
+        <b>Students are expected to be comfortable with data structures and Python.</b>
+      </div>
+    </div>
+
+    <br>
+    <div class="row">
+      <div class="col-md-2"><b>Basic Info:</b></div>
+      <div class="col-md-8"> 
+        <a href="https://github.com/w4111/syllabus">Syllabus and Basic Information</a>
+      </div>
+    </div>
+
+    <br>
+    <div class="row">
+      <div class="col-md-2"><a id="grading" name="grading"></a><b>Grading:</b></div>
+      <div class="col-md-8">
+        Grading will be based on exams and successful completion of homeworks and projects.
+        <br><br>
+        <table class="table table-striped">
+          <tbody>
+            <tr>
+              <td>
+              Homeworks 
+              <!--(<a href="https://github.com/w4111/hw0">HW0</a>
+              <a href="https://github.com/w4111/hw1">HW1</a> 
+              <a href="https://github.com/w4111/hw2">HW2</a> 
+              <a href="https://github.com/w4111/hw3">HW3</a> 
+              <a href="https://github.com/w4111/hw4">HW4</a>)
+              -->
+              </td>
+              <td>15% </td>
+            </tr>
+            <tr>
+              <td>Project 1
+                <!--<a href="https://github.com/w4111/project1">Project 1</a> 
+                (<a href="https://github.com/w4111/project1/blob/master/part1.md">Part 1</a> 
+                <a href="https://github.com/w4111/project1/blob/master/part2.md">Part 2</a>
+                <a href="https://github.com/w4111/project1/blob/master/part3.md">Part 3</a>)
+              -->
+              </td>
+              <td>15%</td>
+            </tr>
+            <tr>
+              <td>Project 2
+                <!--<a href="https://github.com/w4111/project2">Project 2</a>-->
+              </td>
+              <td>5% </td>
+            </tr>
+            <tr>
+              <td> Midterm</td>
+              <td>25% 
+                <!--[<a href="midterm-2010f.pdf">2010</a> | <a href="midterm-2010f-solutions.pdf">solutions</a>] 
+                [<a href="midterm-2015f.pdf">2015</a> | <a href="midterm-2015f-solutions.pdf">solutions</a>] 
+                <br>
+                [<a href="practice.pdf">practice</a> | <a href="practice-solutions.pdf">solutions</a>] | [<a href="midterm-2016s.pdf">2016</a> | <a href="midterm-2016s-solutions.pdf">solutions</a>]
+                -->
+              </td>
+            </tr>
+            <tr>
+              <td>In class test 2</td>
+              <td>40% 
+                <!--
+                [<a href="final-2014f.pdf">2014</a> | <a href="final-2014f-solutions.pdf">solutions</a>] 
+                [<a href="final-2015f.pdf">2015</a> | <a href="final-2015f-solutions.pdf">solutions</a>] 
+                [<a href="https://github.com/w4111/syllabus/blob/master/queryoptproblems.md">query optimization practice</a> | ]
+                [<a href="final-2016s.pdf">2016</a> | <a href="final-2016s-solutions.pdf">solutions</a>]
+                -->
+              </td>
+            </tr>
+        </tbody></table>
+        <a href="https://github.com/w4111/syllabus">See Syllabus for grading info</a>
+      </div>
+    </div>
+
+
+    <br>
+    
+    <div class="row">
+      <div class="col-md-2" style="vertical-align: top"><a id="links" name="links"></a><b>Useful Links:</b></div>
+      <div class="col-md-8">
+        <!--Link to <a href="https://www.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=columbia.edu_5552pjkf1resa92b2m80frtrmk%40group.calendar.google.com&amp;color=%238C500B&amp;ctz=America%2FNew_York">Office hours</a> google calendar (if it doesnt' load, incognito seems to help).
+        <br>-->
+        <!--Hand in most assignments on <a href="http://courseworks.columbia.edu/">CourseWorks</a>.
+        <br>-->
+        Discuss the class on <a href="https://piazza.com/class/ijk4fyuhr8v38q">Piazza</a>.
+        <small class="text-muted">Aside from personal questions, please use Piazza rather than emailing the staff!</small>
+        <br> 
+        Check out <a href="https://github.com/w4111/">the course github repository</a> 
+        (including lecture notes, code, homeworks, and slides!).
+      </div>
+    </div>
+
+
+    <h3>Ephemeral Announcments</h3>
+    <div class="row announce">
+      <div class="col-md-2 "></div>
+      <div class="col-md-8 ">
+      </div>
+    </div>
+
+
+
+
+    <h3>Class Schedule </h3>
+    <a id="schedule" name="schedule"></a>
+    <table class="table table-striped" >
+      <thead>
+          <tr >
+            <th > <p > <span >Date </span> </p> </th>
+            <th > <p > <span >Topic </span> </p> </th>
+            <th style="max-width: 200px"> <p > <span >Readings </span> </p> </th>
+            <th style="max-width: 200px;"> <p > <span >Assigned</span> </p> </th>
+            <th style="max-width: 200px;"> <p > <span >Due</span> </p> </th>
+          </tr>
+      </thead>
+      <tbody id="schedule_body">
+      </tbody>
+    </table>
+
+
+  <!-- edit this javascript file to edit the clasess and dates -->
+  <script src="lib/classes.js"></script>
+
+
+</div>
+</body></html>
