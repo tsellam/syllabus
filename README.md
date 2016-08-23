@@ -1,5 +1,17 @@
 # W4111 Spring 2016 Syllabus (Section 002)
 
+
+Goal
+
+        The goal of this class is two-fold.  First, to introduce
+        you to core database concepts (e.g., data modeling, logical
+        design, SQL) so that you too can build a billion dollar
+        application.  Second, to teach enough about database engine
+        internals (e.g., physical database design, query optimization,
+        transaction processing) so you have a good sense of why
+        queries may be running slowly/incorrectly.
+
+
 See the schedule on the course web site: http://www.cs.columbia.edu/~coms4111/ewu.html
 
 
@@ -7,6 +19,8 @@ Instructor
 
 * Eugene Wu
 * Office Hours: After class on Weds, Mudd 421
+* Class is in 614 Schermerhorn
+
 
 
 Office hours
