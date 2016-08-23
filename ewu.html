@@ -18,7 +18,7 @@
 
 <script id="entry-template" type="text/x-handlebars-template">
   {{#each days}}
-  <tr > 
+  <tr {{#if color}}style="background:{{{color}}}"{{/if}}> 
     <td > <p > <span class="date"> </span> </td> 
     <td>
         <div >
