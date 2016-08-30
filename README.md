@@ -60,23 +60,28 @@ Prerequisites
 
 
 
-# Assignment Collaboration Policies
+# Assignment Collaboration Policies AKA Cheating
 
 * Homework assignments must be done alone.  
   * No collaboration is allowed.  [Don't do it](http://www.cs.columbia.edu/education/honesty)
 * Projects are in teams of 2.  
   * Both members will recieve the same grade and should collaborate with each other.  
   * Collaboration outside of the team is not allowed. [Don't do it](http://www.cs.columbia.edu/education/honesty)
-* [See Columbia's description of academic honesty](http://www.cs.columbia.edu/education/honesty)
+* Cheating is no fun for anyone
+  * Rampant cheating devaluages the Columbia degree.
+  * Any *hint* of cheating will be reported to student affairs and result in 
+  * If you are struggling to keep up in the course, come see the instructor during office hours.
+  * Cheating is a slippery slope -- it may be enticing, but goes against the values in this course.
+* [If you have _any_ doubt, see Columbia's description of academic honesty](http://www.cs.columbia.edu/education/honesty)
 
 
 # Homework Submission Policy
 
-* Homework is generally due before class (8:40 AM) on the due date, unless indicated otherwise.
-* Unless we specify otherwise, students should submit their homework in hard copy rather than electronically.
-  This is a large class and the TAs cannot afford the overhead of printing out electronic homework submissions for grading.
+* Homework is generally due before class (2:40 PM) on the due date, unless indicated otherwise.
 * **Auditors**: Only students registered for course units may turn in work to be graded.
 
+<!-- Unless we specify otherwise, students should submit their homework in hard copy rather than electronically.
+  This is a large class and the TAs cannot afford the overhead of printing out electronic homework submissions for grading.-->
 
 
 # Grading
@@ -141,7 +146,7 @@ When using late days, note that homeworks tend to get harder later in the course
 
 # Communication
 
-* **(Perferred)**: [Piazza](https://piazza.com/class/irvic0xfdqk3p6)
+* **(Preferred)**: [Piazza](https://piazza.com/class/irvic0xfdqk3p6)
 * **(Least Preferred)**: Email course staff.  There are too many people in the course for this to be a primary option!
 * Announcements will be on website and via emails using courseworks
 
