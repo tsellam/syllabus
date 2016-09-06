@@ -93,6 +93,7 @@ Grading Policy
 * Project 2: 5% 
 * Midterm 1: 25% (closed book, 1 two-sided cheat sheet)
 * Midterm 2: 40% (closed book, 1 two-sided cheat sheet)
+* Scribing: up to 5% extra credit
 
 Notes on grading (please read):
 <a name="cheating"></a>
@@ -100,6 +101,7 @@ Notes on grading (please read):
 * The percentages are subject to change as circumstances dictate. 
 * Active participation in piazza and/or OH can positively affect your final grade.
 * Since exams are the main indicators we have of individual grasp of the material, we reserve the right to adjust final letter grades based on exam performance.
+* Extra credit is added in a way that _only benefits_ the reciptients and _does not_ harm others in the course.  In other words, you are NOT penalized in any way if you do not recieve extra credit.
 * Work that you submit must be your own (or for two-person projects, the team's). 
   We will run the standard software duplication checkers on submitted assignments.
 * Don't cheat.  It's not worth it.
