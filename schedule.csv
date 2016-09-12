@@ -4,24 +4,24 @@ white,,Intro,,https://github.com/w4111/syllabus/blob/master/lectures/lec1.pdf,Ch
 #e7f8ff,,Entity-Relationship Modeling,"More constraints, using ER models",,Chapter 2,,,,Formed team for Project 1 (no deliverable),1
 #e7f8ff,,Relational Model,Dawn before time: non relational models.,,Chapter 3,"<a href=""./docs/goesaround.pdf"">What goes around comes around</a>",,,,
 #e7f8ff,,Relational Model,ER and Relational Review.,,Chapter 3,"<a href=""./docs/goesaround.pdf"">What goes around comes around</a>",,,Project 1 Part 1 approval phase 9/21-9/28,1
-#e7f8ff,,Relational Model,Intro to Relational Algebra,,Chapter 3,Original Relational Model paper,HW 1,,Project 1 Part 1 approval phase 9/21-9/28,1
+#e7f8ff,,Relational Model,Intro to Relational Algebra,,Chapter 3,Original Relational Model paper,HW 1,1,Project 1 Part 1 approval phase 9/21-9/28,1
 #f2f9ed,,Relational Algebra,,,,,,,Project 1 Part 1 approval phase 9/21-9/28,1
-#f2f9ed,,Relational Algebra,"ER to Relational, supplemental notes",,Sections 4.1 and 4.2,,Project 1 Part 2,,Project 1 Part 1 2:40PM in class. Hard copy,
-#f2f9ed,,Relational Algebra,,,,,,,HW 1 2:30PM in class. Hard copy.,
-#f2f9ed,,SQL,Knee deep in SQL,,Chapter 5,,HW 2,,,
+#f2f9ed,,Relational Algebra,"ER to Relational, supplemental notes",,Sections 4.1 and 4.2,,Project 1 Part 2,1,Project 1 Part 1 2:40PM in class. Hard copy,1
+#f2f9ed,,Relational Algebra,,,,,,,HW 1 2:30PM in class. Hard copy.,1
+#f2f9ed,,SQL,Knee deep in SQL,,Chapter 5,,HW 2,1,,
 #f2f9ed,,SQL,Order by and UDFs,,Chapter 5,,,,,
-#f2f9ed,,SQL,"Triggers, WITH, Views.",,Chapter 5,,,,Project 1 Part 2 10AM,
-white,,Midterm Review,,,,,,,HW 2 Due 10AM.,
+#f2f9ed,,SQL,"Triggers, WITH, Views.",,Chapter 5,,,,Project 1 Part 2 10AM,1
+white,,Midterm Review,,,,,,,HW 2 Due 10AM.,1
 white,,Midterm: closed book,1/2 page cheat sheet,,,,,,,
 #edf3f9,,APIs,"DBAPIs, Impedance Mismatches, SQL Injection",,Chapter 6,,,,,
-#edf3f9,,Normalization,Redundancy and Functional Dependencies,,Chapter 19 except 19.8 (you do need to know 3NF at the level of lecture),,HW 3,,,
+#edf3f9,,Normalization,Redundancy and Functional Dependencies,,Chapter 19 except 19.8 (you do need to know 3NF at the level of lecture),,HW 3,1,,
 #edf3f9,,Normalization,,,Chapter 8 (level of detail covered in class),,,,,
 #ddf9ff,,Physical Design,"Disk storage, Heap Files",,,,,,,
-#ddf9ff,,Physical Design,"B+Trees, Hash Files, Single operator optimizations",,,,,,Project 1 Part 3,
+#ddf9ff,,Physical Design,"B+Trees, Hash Files, Single operator optimizations",,,,,,Project 1 Part 3,1
 #ddf9ff,,Query Processing,"Query plans, statistics, join algorithms",,Chapter 12 (level of detail covered in class),,,,,
-#ddf9ff,,Query Processing,Join algorithms and Selinger,,Chapter 12 (level of detail covered in class),Access Path Selection in a Relational Database Management System,HW 4<br/>Project 2,,HW 3 10AM,
+#ddf9ff,,Query Processing,Join algorithms and Selinger,,Chapter 12 (level of detail covered in class),Access Path Selection in a Relational Database Management System,HW 4<br/>Project 2,1,HW 3 10AM,1
 #ddf9ff,,Transaction Processing,Concurrency Control,,"Chapter 16 (level of detail covered in class). Ignore 16.5, 16.6.",,,,,
 #ddf9ff,,Transaction Processing,Recovery,,"Chapter 16 (level of detail covered in class). Ignore 16.5, 16.6.",,,,,
-white,,Guest Lecture/Review,,,,,,,HW 4 2:30PM in class. Hard copy.,
-white,,Final Exam (Cumulative): Closed Book,1/2 page cheat sheet,,,,,,Project 2 (10AM),
+white,,Guest Lecture/Review,,,,,,,HW 4 2:30PM in class. Hard copy.,1
+white,,Final Exam (Cumulative): Closed Book,1/2 page cheat sheet,,,,,,Project 2 (10AM),1
 white,,Project Presentations,The Future and More,,,,,,,
