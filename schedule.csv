@@ -1,6 +1,6 @@
 color,date,slug,title,link,readings,optional,assigned,ashow,due,dshow
 white,,Intro,,https://github.com/w4111/syllabus/blob/master/lectures/lec1.pdf,Chapter 1,,HW 0,1,,
-#e7f8ff,,Entity-Relationship Modeling,ER Modeling,,Chapter 2,,Project 1 Part 1. <br/>LOOK FOR TEAMMATE,1,"<a href=""http://github.com/w4111/hw0"">HW 0 10AM</a><br/>You will receive a 0 in this class if HW0 not completed on time -- no exceptions",1
+#e7f8ff,,Entity-Relationship Modeling,ER Modeling,https://github.com/w4111/syllabus/blob/master/lectures/lec2.pdf,Chapter 2,,Project 1 Part 1. <br/>LOOK FOR TEAMMATE,1,"<a href=""http://github.com/w4111/hw0"">HW 0 10AM</a><br/>You will receive a 0 in this class if HW0 not completed on time -- no exceptions",1
 #e7f8ff,,Entity-Relationship Modeling,"More constraints, using ER models",,Chapter 2,,,,Formed team for Project 1 (no deliverable),1
 #e7f8ff,,Relational Model,Dawn before time: non relational models.,,Chapter 3,"<a href=""./docs/goesaround.pdf"">What goes around comes around</a>",,,,
 #e7f8ff,,Relational Model,ER and Relational Review.,,Chapter 3,"<a href=""./docs/goesaround.pdf"">What goes around comes around</a>",,,Project 1 Part 1 approval phase 9/21-9/28,1
