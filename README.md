@@ -67,6 +67,7 @@ Prerequisites
 * Projects are in teams of 2.  
   * Both members will recieve the same grade and should collaborate with each other.  
   * Collaboration outside of the team is not allowed. [Don't do it](http://www.cs.columbia.edu/education/honesty)
+  * CVN students are also required to have a partner.  The partner can be someone in the main class or flipped classroom.
 * Cheating is no fun for anyone
   * Rampant cheating devaluages the Columbia degree.
   * Any *hint* of cheating will be reported to student affairs and result in 
@@ -79,6 +80,7 @@ Prerequisites
 
 * Homework is generally due before class (2:40 PM) on the due date, unless indicated otherwise.
 * **Auditors**: Only students registered for course units may turn in work to be graded.
+* For CVN students with local teammates, their teammates can turn in homework for them. If both teammates are remote, let the staff know and we can set up electronic submission for you.
 
 <!-- Unless we specify otherwise, students should submit their homework in hard copy rather than electronically.
   This is a large class and the TAs cannot afford the overhead of printing out electronic homework submissions for grading.-->
