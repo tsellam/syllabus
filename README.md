@@ -1,6 +1,5 @@
 # W4111 Spring 2016 Syllabus (Section 002)
 
-
 Goal
 
         The goal of this class is two-fold.  First, to introduce
