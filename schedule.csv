@@ -4,7 +4,7 @@ white,,Intro,,https://github.com/w4111/syllabus/blob/master/lectures/lec1.pdf,Ch
 #e7f8ff,,Entity-Relationship Modeling,"More constraints, using ER models",https://github.com/w4111/syllabus/blob/master/lectures/lec3.pdf,Chapter 2,,,,Formed team for Project 1 (no deliverable),1
 #e7f8ff,,Relational Model,Dawn before time: non relational models.,https://github.com/w4111/syllabus/blob/master/lectures/lec4.pdf,Chapter 3,"<a href=""./reading/goesaroundcomesaround.pdf"">What goes around comes around</a>",,,,
 #e7f8ff,,Relational Model,ER and Relational Review.,https://github.com/w4111/syllabus/blob/master/lectures/lec5.pdf,Chapter 3,"<a href=""./reading/goesaroundcomesaround.pdf"">What goes around comes around</a>",,,Project 1 Part 1 approval phase 9/21-9/28,1
-#e7f8ff,,Relational Model,Intro to Relational Algebra,,Chapter 3,"<a href=""./reading/codd.pdf"">Original Relational Model paper</a>",HW 1,1,Project 1 Part 1 approval phase 9/21-9/28,1
+#e7f8ff,,Relational Model,Intro to Relational Algebra,https://github.com/w4111/syllabus/blob/master/lectures/lec6.pdf,Chapter 3,"<a href=""./reading/codd.pdf"">Original Relational Model paper</a>","<a href=""https://github.com/w4111/hw1"">HW 1</a>",1,Project 1 Part 1 approval phase 9/21-9/28,1
 #f2f9ed,,Relational Algebra,,,,,,,Project 1 Part 1 approval phase 9/21-9/28,1
 #f2f9ed,,Relational Algebra,"ER to Relational, supplemental notes",,Sections 4.1 and 4.2,,Project 1 Part 2,1,Project 1 Part 1 2:40PM in class. Hard copy,1
 #f2f9ed,,Relational Algebra,,,,,,,HW 1 2:30PM in class. Hard copy.,1
