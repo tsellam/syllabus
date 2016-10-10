@@ -8,7 +8,7 @@ white,,Intro,,https://github.com/w4111/syllabus/blob/master/lectures/lec1.pdf,Ch
 #f2f9ed,,Relational Algebra,,https://github.com/w4111/syllabus/blob/master/lectures/lec7.pdf,,,,,Project 1 Part 1 approval phase 9/21-9/28,1
 #f2f9ed,,Relational Algebra,"ER to Relational, supplemental notes",https://github.com/w4111/syllabus/blob/master/lectures/lec8.pdf,Sections 4.1 and 4.2,,"<a href=""https://github.com/w4111/project1"">Project 1 Part 2.</a> ",1,Project 1 Part 1 2:40PM in class. Hard copy,1
 #f2f9ed,,Relational Algebra,,https://github.com/w4111/syllabus/blob/master/lectures/lec9.pdf,,,,,HW 1 2:30PM in class. Hard copy.,1
-#f2f9ed,,SQL,Knee deep in SQL,https://github.com/w4111/syllabus/blob/master/lectures/lec10.pdf,Chapter 5,,HW 2,1,,
+#f2f9ed,,SQL,Knee deep in SQL,https://github.com/w4111/syllabus/blob/master/lectures/lec10.pdf,Chapter 5,"<a href=""https://github.com/w4111/syllabus/blob/master/lectures/lec10.pdf"">Aggregation Slides</a>","<a href=""https://www.instabase.com/ewu/w4111-public/fs/Instabase%20Drive/HW2/"">HW 2</a>",1,,
 #f2f9ed,,SQL,Order by and UDFs,,Chapter 5,,,,,
 #f2f9ed,,SQL,"Triggers, WITH, Views.",,Chapter 5,,,,Project 1 Part 2 10AM,1
 white,,Midterm Review,,,,,,,HW 2 Due 10AM.,1
