@@ -12,7 +12,7 @@ white,,Intro,,https://github.com/w4111/syllabus/blob/master/lectures/lec1.pdf,Ch
 #f2f9ed,,SQL,Order by and UDFs,,Chapter 5,,,,,
 #f2f9ed,,SQL,"Triggers, WITH, Views.",,Chapter 5,,,,Project 1 Part 2 10AM,1
 white,,Midterm Review,,,,,,,HW 2 Due 10AM.,1
-white,,Midterm: closed book,1/2 page cheat sheet,,,,,,,
+white,,Midterm: closed book,1/2 page cheat sheet,,,,Project 1 Part 3,,,
 #edf3f9,,APIs,"DBAPIs, Impedance Mismatches, SQL Injection",,Chapter 6,,,,,
 #edf3f9,,Normalization,Redundancy and Functional Dependencies,,Chapter 19 except 19.8 (you do need to know 3NF at the level of lecture),,HW 3,1,,
 #edf3f9,,Normalization,,,Chapter 8 (level of detail covered in class),,,,,

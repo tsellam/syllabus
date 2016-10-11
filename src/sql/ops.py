@@ -1,4 +1,9 @@
 import csv
+try:
+  import instabase.notebook.ipython.utils as ib
+  ib.import_pyfile('./parser.py', 'parser')
+except:
+  pass
 from parser import parse
 
 def cond_to_func(expr_or_func):
@@ -30,24 +35,34 @@ class Print(Op):
 
 class Scan(Op):
   def __init__(self, filename):
+    openfile = open
+    try:
+      openfile = ib.open
+    except:
+      pass
+
+    with openfile(filename) as f:
+        self.proc_file(f)
+
+  def proc_file(self, f):
     fields = None
     types = None
     rows = None
-    with file(filename) as f:
-      dialect = csv.Sniffer().sniff(f.read(2048))
-      f.seek(0)
-      reader = csv.reader(f, dialect)
-      header = reader.next()
-      header = [v.split(":") for v in header]
-      fields, types = zip(*header)
-      rows = [dict(zip(fields, l)) for l in reader]
-      for row in rows:
-        for f,t in zip(fields, types):
-          if t == "num":
-            row[f] = float(row[f])
+    dialect = csv.Sniffer().sniff(f.read(2048))
+    f.seek(0)
+    reader = csv.reader(f, dialect)
+    header = reader.next()
+    header = [v.split(":") for v in header]
+    fields, types = zip(*header)
+    rows = [dict(zip(fields, l)) for l in reader]
+    for row in rows:
+      for f,t in zip(fields, types):
+        if t == "num":
+          row[f] = float(row[f])
     self.fields = fields
     self.types = types
     self.data = rows
+
       
 class Join(Op):
   """

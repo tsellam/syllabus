@@ -1,39 +1,24 @@
-from pyparsing import *
-
 import re
 import math
-
-"""
-+-NOT expr
-(expr)
-expr op expr
-f(args)
-'str'
-num
-float
-"""
+import numpy as np
 
 from parsimonious.grammar import Grammar
 from parsimonious.nodes import NodeVisitor
-"""
-    foo = (value binaryop expr) /
-               (value ("is null" / "is not null")) /
-               (value IS NOT? expr) /
-               (unaryop expr) /
-               (value)
 
-"""
+
+
 grammar = Grammar(
     r"""
     expr     = biexpr / unexpr / value
     biexpr   = value ws binaryop ws expr
     unexpr   = unaryop expr
-    value    = number /
+    value    = parenval / 
+               number /
                boolean /
                function /
                string /
                attr
-    parenval = ("(" ws expr ws ")") 
+    parenval = "(" ws expr ws ")"
     function = fname "(" ws arg_list? ws ")"
     arg_list = expr (ws "," ws expr)*
     number   = ~"\d*\.?\d+"i
@@ -92,22 +77,50 @@ class Expr(object):
     return binary(self.op, l, r)
 
 class Func(object): 
+  """
+  This object needs to deal with scalar AND aggregation functions.
+  """
+  agg_func_lookup = dict(
+    avg=np.mean,
+    count=len,
+    sum=np.sum,
+    std=np.std,
+    stddev=np.std
+  )
+  scalar_func_lookup = dict(
+    lower=lambda s: str(s).lower()
+  )
+
+
   def __init__(self, name, args):
-    self.name = name
+    self.name = name.lower()
     self.args = args
+
   def __str__(self):
     args = ",".join(map(str, self.args))
     return "%s(%s)" % (self.name, args)
+
   def __call__(self, tup, tup2=None):
-    args = [arg(tup, tup2) for arg in self.args]
-    f = None
-    if self.name in tup:
-      f = tup[self.name]
-    elif tup2 and self.name in tup2:
-      f = tup2[self.name]
-    else:
-      raise Exception("couldn't find function %s in tuple" % self.name)
-    return f(args)
+    f = Func.agg_func_lookup.get(self.name, None)
+    if f:
+      if "__group__" not in tup:
+        raise Exception("aggregation function %s called but input is not a group!")
+      args = []
+      for gtup in tup["__group__"]:
+        args.append([arg(gtup) for arg in self.args])
+
+      # make the arguments columnar:
+      # [ (a,a,a,a), (b,b,b,b) ]
+      args = zip(*args)
+      return f(*args)
+
+
+    f = agg_func_lookup.get(self.name, None)
+    if f:
+      args = [arg(tup, tup2) for arg in self.args]
+      return f(args)
+
+    raise Exception("I don't recognize function %s" % self.name)
 
 class Literal(object):
   def __init__(self, v):
@@ -170,6 +183,9 @@ class Visitor(NodeVisitor):
   def visit_string(self, node, children):
     return Literal(node.text)
 
+  def visit_parenval(self, node, children):
+    return children[2]
+
   def visit_value(self, node, children):
     return children[0]
 
@@ -190,3 +206,7 @@ class Visitor(NodeVisitor):
 
 def parse(s):
   return Visitor().parse(s)
+
+if __name__ == "__main__":
+  print parse("(a+a) > 3")(dict(a=2))
+

@@ -1,4 +1,9 @@
 from collections import *
+try:
+  import instabase.notebook.ipython.utils as ib
+  ib.import_pyfile('./ops.py', 'ops')
+except:
+  pass
 from ops import *
 
 def run_op(op, f=lambda t:t):
@@ -47,12 +52,19 @@ def run_op(op, f=lambda t:t):
     run_op(op.p, __f__(I()))
 
   elif klass == "GroupBy":
-    hashtable = defaultdict(list)
+    hashtable = defaultdict(lambda: [None, None, []])
     def group_f(tup):
       key = tuple([e(tup) for e in op.group_exprs])
-      hashtable[key].append(tup)
+      hashtable[key][0] = key
+      hashtable[key][1] = tup
+      hashtable[key][2].append(tup)
     run_op(op.p, group_f)
-    f(hashtable)
+
+    for _, (key, tup, group) in hashtable.iteritems():
+      tup = dict(tup)
+      tup["__key__"] = key
+      tup["__group__"] = group
+      f(tup)
 
   elif klass == "OrderBy":
     tup_buffer = []
@@ -75,20 +87,26 @@ def run_op(op, f=lambda t:t):
     run_op(op.p, project_f)
 
 
-o = Print(
-      Limit(
-        Project(
-          Filter(
-            Join(
-              Scan("data.csv"), 
-              Project(Scan("data.csv"), ["a", "b", "c"], ["x", "y", "z"]),
-              "a = x"),
-            "a <= x"),
-          ["a*2", "c-a"]
-        ),
-        5
+if __name__ == "__main__":
+
+  o = Print(
+        Limit(
+          Project(
+            Filter(
+              Join(
+                Scan("data.csv"), 
+                Project(Scan("data.csv"), ["a", "b", "c"], ["x", "y", "z"]),
+                "a = x"),
+              "a <= x"),
+            ["a*2", "c-a"]
+          ),
+          5
+        )
       )
-    )
-run_op(o)
+
+  s = Scan("data.csv")
+  g = GroupBy(s, ["a"])
+  p = Project(g, ["avg(b)", "avg(a)", "a"], ["avg", "avg2", "a"])
+  run_op(Print(p))
 
 
