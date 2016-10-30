@@ -1,6 +1,8 @@
 import csv
 import math
 import numpy as np
+import inspect
+import types
 
 
 
@@ -11,8 +13,50 @@ class Op:
   def __init__(self):
     pass
 
-  def next(self):
-    pass
+  def children(self):
+    """
+    Go through all attributes of this object and return those that
+    are subclasses of Op
+    """
+    children = []
+    for attrval in self.__dict__.values():
+      if not isinstance(attrval, list):
+        attrval = [attrval]
+      for v in attrval:
+        if v and isinstance(v, Op):
+          children.append(v)
+    return children
+
+  def traverse(self, f):
+    f(self)
+    for child in self.children():
+      child.traverse(f)
+
+  def collect(self, klass_or_names):
+    """
+    Collect operators with the same class name as argument
+    """
+    ret = []
+    if not isinstance(klass_or_names, list):
+      klass_or_names = [klass_or_names]
+    names = [kn for kn in klass_or_names if isinstance(kn, basestring)]
+    klasses = [kn for kn in klass_or_names if isinstance(kn, types.ClassType)]
+
+    def f(node):
+      if node and (
+          node.__class__.__name__ in names or
+          any([isinstance(node, kn) for kn in klasses])):
+        ret.append(node)
+    self.traverse(f)
+    return ret
+
+  def collectone(self, klassnames):
+    l = self.collect(klassnames)
+    if l:
+      return l[0]
+    return None
+
+
 
 class Print(Op):
   def __init__(self, p):
@@ -35,9 +79,9 @@ class SubQuerySource(Source):
     self.alias = alias 
 
   def __str__(self):
-    return "Source: (%s)" % self.p
+    return "Source: (%s AS %s)" % (self.p, self.alias)
 
-class Scan(Op):
+class Scan(Source):
   def __init__(self, filename, alias=None):
     if "." not in filename:
       filename += ".csv"
@@ -81,14 +125,14 @@ class Scan(Op):
     self.data = rows
   
   def __str__(self):
-    return "Source: %s" % self.filename
+    return "Source:(%s AS %s)" % (self.filename, self.alias)
 
       
 class Join(Op):
   """
   Theta Join
   """
-  def __init__(self, l, r, cond=lambda (t1, t2): True):
+  def __init__(self, l, r, cond=None):
     """
     @l    left (outer) table of the join
     @r    right (inner) table of the join
@@ -99,10 +143,10 @@ class Join(Op):
     """
     self.l = l
     self.r = r
-    self.cond = cond
+    self.cond = cond or Bool(True)
 
   def __str__(self):
-    return "JOIN: %s\t%s ON %s" % (str(self.l), str(self.r), str(self.cond))
+    return "JOIN:(\n\t%s\n\t%s ON %s)" % (str(self.l), str(self.r), str(self.cond))
 
 
 class GroupBy(Op):
@@ -117,6 +161,7 @@ class GroupBy(Op):
 
   def __str__(self):
     return "GROUP BY: %s\n%s" % (",".join(map(str, self.group_exprs)), self.p)
+
 
 class OrderBy(Op):
   def __init__(self, p, order_exprs, ascdesc):
@@ -137,6 +182,7 @@ class OrderBy(Op):
     return "ORDER BY: %s\n%s" % (",".join(map(str, self.order_exprs)), self.p)
 
 
+
 class Filter(Op):
   def __init__(self, p, cond):
     """
@@ -148,6 +194,7 @@ class Filter(Op):
 
   def __str__(self):
     return "WHERE: %s\n%s" % (str(self.cond), self.p)
+
 
 class Limit(Op):
   def __init__(self, p, limit):
@@ -173,9 +220,17 @@ class Project(Op):
     self.p = p
     self.exprs = exprs
     self.aliases = aliases or []
-    if len(self.aliases) < len(self.exprs):
-      self.aliases.extend(
-          ["attr%s" % i for i in range(len(self.exprs)-len(self.aliases))])
+    self.set_default_aliases()
+
+  def set_default_aliases(self):
+    if len(self.aliases) >= len(self.exprs):
+      self.aliases = self.aliases[:len(self.exprs)]
+      return 
+
+    self.aliases += ([None] * len(self.exprs) - len(self.aliases))
+    for i in xrange(len(self.exprs)):
+      if not self.aliases and not isinstance(self.exprs[i], Star):
+        self.aliases[i] = "attr%s" % i 
 
 
   def __str__(self):
@@ -209,7 +264,8 @@ def binary(op, l, r):
   if op == ">=": return l >= r
   return True
 
-class Expr(object):
+
+class Expr(Op):
   def __init__(self, op, l, r=None):
     self.op = op
     self.l = l
@@ -227,7 +283,7 @@ class Expr(object):
     r = self.r(tup, tup2)
     return binary(self.op, l, r)
 
-class Func(object): 
+class Func(Op): 
   """
   This object needs to deal with scalar AND aggregation functions.
   """
@@ -273,22 +329,30 @@ class Func(object):
 
     raise Exception("I don't recognize function %s" % self.name)
 
-class Literal(object):
+class Literal(Op):
   def __init__(self, v):
     self.v = v
+
   def __call__(self, tup=None, tup2=None): 
     return self.v
+
   def __str__(self):
     if isinstance(self.v, basestring):
       return "'%s'" % self.v
     return str(self.v)
 
-class Attr(object):
+class Bool(Op):
+  def __init__(self, v):
+    self.v = v
+  def __call__(self, *args, **kwargs):
+    return self.v
+  def __str__(self):
+    return str(self.v)
+
+class Attr(Op):
   def __init__(self, attr, tablename=None):
     self.attr = attr
     self.tablename = tablename
-    if self.tablename:
-      print "WARNING: can't deal with * for specific tables: %s" % self.tablename
 
   def __call__(self, tup, tup2=None):
     if self.attr in tup:
@@ -298,9 +362,11 @@ class Attr(object):
     raise Exception("couldn't find %s in either tuple" % self.attr)
 
   def __str__(self):
+    if self.tablename:
+      return "%s.%s" % (self.tablename, self.attr)
     return self.attr
 
-class Star(object):
+class Star(Op):
   def __init__(self, tablename=None):
     self.tablename = tablename
     if self.tablename:

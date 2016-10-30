@@ -54,7 +54,7 @@ grammar = Grammar(
     source_table   = table_name (AS wsp name)?
     source_subq    = "(" ws query ws ")" (AS ws name)?
 
-    where_clause   = WHERE wsp expr (AND expr)*
+    where_clause   = WHERE wsp expr (AND wsp expr)*
 
     gb_clause      = GROUP BY group_clause having_clause?
     group_clause   = grouping_term (ws "," grouping_term)*
@@ -71,7 +71,7 @@ grammar = Grammar(
 
 
     expr     = biexpr / unexpr / value
-    biexpr   = value ws binaryop ws expr
+    biexpr   = value ws binaryop_no_andor ws expr
     unexpr   = unaryop expr
     value    = parenval / 
                number /
@@ -90,7 +90,9 @@ grammar = Grammar(
     boolean  = "true" / "false"
     compound_op = "UNION" / "union"
     binaryop = "+" / "-" / "*" / "/" / "=" / "<>" /
-               "<=" / ">" / "<" / ">" / "and" / "or"
+               "<=" / ">" / "<" / ">" / "and" / "AND" / "or" / "OR"
+    binaryop_no_andor = "+" / "-" / "*" / "/" / "=" / "<>" /
+               "<=" / ">" / "<" / ">" 
     unaryop  = "+" / "-" / "not"
     ws       = ~"\s*"i
     wsp      = ~"\s+"i
@@ -227,38 +229,20 @@ class Visitor(NodeVisitor):
 
   def visit_select_results(self, node, children):
     allexprs = flatten(children, 0, 1)
-    exprs = []
-    aliases = []
-
-    for i, e in enumerate(allexprs):
-      if isinstance(e, tuple):
-        e, alias = e
-        if not alias:
-          alias = "attr%s" % i
-      else:
-        alias = "attr%s" % i
-      exprs.append(e)
-      aliases.append(alias)
-
+    exprs, aliases = zip(*allexprs)
     return Project(None, exprs, aliases)
 
   def visit_sel_res_tab_star(self, node, children):
-    return Star(children[0])
+    return (Star(children[0]), None)
 
   def visit_sel_res_all_star(self, node, children):
-    return Star()
+    return (Star(), None)
 
   def visit_sel_res_val(self, node, children):
-    alias = None 
-    if children[1]:
-      alias = children[1]
-    return (children[0], alias)
+    return (children[0], children[1])
 
   def visit_sel_res_col(self, node, children):
-    alias = None 
-    if children[1]:
-      alias = children[1]
-    return (children[0], alias)
+    return (children[0], children[1])
 
 
   #
@@ -274,9 +258,7 @@ class Visitor(NodeVisitor):
 
   def visit_source_table(self, node, children):
     tname = children[0]
-    alias = tname
-    if children[1]:
-      alias = children[1][1]
+    alias = children[1] or tname
     return Scan(tname, alias)
 
   def visit_source_subq(self, node, children):
@@ -330,10 +312,7 @@ class Visitor(NodeVisitor):
     return Limit(None, children[2])
 
   def visit_col_ref(self, node, children):
-    table = children[0]
-    if table:
-      table = table[0]
-    return Attr(children[1], table)
+    return Attr(children[1], children[0])
 
   def visit_name(self, node, children):
     return node.text
@@ -342,6 +321,9 @@ class Visitor(NodeVisitor):
     return Attr(node.text)
 
   def visit_binaryop(self, node, children):
+    return node.text
+
+  def visit_binaryop_no_andor(self, node, children):
     return node.text
 
   def visit_biexpr(self, node, children):
