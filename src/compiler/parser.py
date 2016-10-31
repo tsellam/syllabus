@@ -70,7 +70,8 @@ grammar = Grammar(
 
 
 
-    expr     = biexpr / unexpr / value
+    expr     = btwnexpr / biexpr / unexpr / value
+    btwnexpr = value BETWEEN wsp value AND wsp value
     biexpr   = value ws binaryop_no_andor ws expr
     unexpr   = unaryop expr
     value    = parenval / 
@@ -84,7 +85,7 @@ grammar = Grammar(
     function = fname "(" ws arg_list? ws ")"
     arg_list = expr (ws "," ws expr)*
     number   = ~"\d*\.?\d+"i
-    string   = ~"\'\w*\'"i
+    string   = ~"([\"\'])(\\\\?.)*?\\1"i
     attr     = ~"\w[\w\d]*"i
     fname    = ~"\w[\w\d]*"i
     boolean  = "true" / "false"
@@ -104,10 +105,10 @@ grammar = Grammar(
     ADD = wsp "ADD"
     ALL = wsp "ALL"
     ALTER = wsp "ALTER"
-    AND = wsp "AND"
-    AS = wsp "AS"
+    AND = wsp ("AND" / "and")
+    AS = wsp ("AS" / "as")
     ASC = wsp "ASC"
-    BETWEEN = wsp "BETWEEN"
+    BETWEEN = wsp ("BETWEEN" / "between")
     BY = wsp "BY"
     CAST = wsp "CAST"
     COLUMN = wsp "COLUMN"
@@ -330,6 +331,10 @@ class Visitor(NodeVisitor):
     return Expr(children[2], children[0], children[-1])
   def visit_unexpr(self, node, children):
       return Expr(children[0], children[1])
+
+  def visit_btwnexpr(self, node, children):
+    v1, v2, v3 = children[0], children[3], children[-1]
+
 
   def visit_expr(self, node, children):
     return children[0]

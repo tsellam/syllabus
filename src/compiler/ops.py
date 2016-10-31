@@ -283,6 +283,24 @@ class Expr(Op):
     r = self.r(tup, tup2)
     return binary(self.op, l, r)
 
+class Between(Op):
+  def __init__(self, expr, lower, upper):
+    """
+    expr BETWEEN lower AND upper
+    """
+    self.expr = expr
+    self.lower = lower
+    self.upper = upper
+
+  def __str__(self):
+    return "(%s) BETWEEN (%s) AND (%s)" % (self.expr, self.lower, self.upper)
+
+  def __call__(self, tup, tup2=None):
+    e = self.expr(tup, tup2)
+    l = self.lower(tup, tup2)
+    u = self.upper(tup, tup2)
+    return e >= l and e <= u
+
 class Func(Op): 
   """
   This object needs to deal with scalar AND aggregation functions.
