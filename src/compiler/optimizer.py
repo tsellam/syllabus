@@ -15,7 +15,7 @@ def optimize(op):
 def from_expansion(op):
   fromop = op.collectone("From")
   filters = op.collect("Filter")
-  sources = fromop.sources
+  sources = fromop.children
 
   sourcealiases = [s.alias for s in sources]
   alias2source = { s.alias: s for s in sources }

@@ -9,9 +9,12 @@ import types
 class Op:
   """
   Base class
+
+  all operators have a single parent
+  an operator may have multiple children
   """
   def __init__(self):
-    pass
+    self.p = None
 
   def children(self):
     """
@@ -57,20 +60,51 @@ class Op:
     return None
 
 
+class UnaryOp(Op):
+  def __init__(self, c):
+    self.c = c
+    c.p = self
 
-class Print(Op):
-  def __init__(self, p):
-    self.p = p
+  def __setattr__(self, attr, v):
+    if attr == "c":
+      self.c = v
+      self.c.p = self
+ 
+class BinaryOp(Op):
+  def __init__(self, l, r):
+    self.l = l
+    self.r = r
+    l.p = r.p = self
+
+  def __setattr__(self, attr, v):
+    if attr == "l":
+      self.l = v
+      self.l.p = self
+    if attr == "r":
+      self.r = v
+      self.r.p = self
+   
+class NaryOp(Op):
+  def __init__(self, children):
+    self.children = children
+    for c in children:
+      c.p = self
+
+  def __setattr__(self, attr, v):
+    if attr == "children":
+      self.children = v
+      for c in self.children:
+        c.p = self
+ 
+class Print(UnaryOp):
+  pass
 
 class From(Op):
-  def __init__(self, sources):
-    self.sources = sources
-
   def __str__(self):
-    arg = ",\n".join(["\t%s" % s for s in self.sources])
+    arg = ",\n".join(["\t%s" % s for s in self.children])
     return "FROM:\n%s" % arg
 
-class Source(Op):
+class Source(UnaryOp):
   pass
 
 class SubQuerySource(Source):
