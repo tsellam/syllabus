@@ -14,7 +14,7 @@ white,,Intro,,https://github.com/w4111/syllabus/blob/master/lectures/lec1.pdf,Ch
 white,,Midterm Review,,,,,,,HW 2 Due 10AM.,1
 white,,Midterm: closed book,one 8x11 page cheat sheet both sides,,,,,,,
 #edf3f9,,APIs,"DBAPIs, Impedance Mismatches, SQL Injection",https://github.com/w4111/syllabus/blob/master/lectures/lec15.pdf,Chapter 6,,"<a href=""https://github.com/w4111/project1/blob/master/part3.md"">Part 3</a>",1,,
-#edf3f9,,Normalization,Redundancy and Functional Dependencies,https://github.com/w4111/syllabus/blob/master/lectures/lec16.pdf,Chapter 19 except 19.8 (you do need to know 3NF at the level of lecture),,HW 3,1,,
+#edf3f9,,Normalization,Redundancy and Functional Dependencies,https://github.com/w4111/syllabus/blob/master/lectures/lec16.pdf,Chapter 19 except 19.8 (you do need to know 3NF at the level of lecture),,"<a href=""https://github.com/w4111/hw3"">HW 3</a>",1,,
 #edf3f9,,Normalization,,https://github.com/w4111/syllabus/blob/master/lectures/lec17.pdf,Chapter 8 (level of detail covered in class),,,,,
 #ddf9ff,,Physical Design,"Disk storage, Heap Files",,,,,,,
 #ddf9ff,,Physical Design,"B+Trees, Hash Files, Single operator optimizations",,,,,,Project 1 Part 3,1
