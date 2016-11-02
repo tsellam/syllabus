@@ -201,7 +201,7 @@ class Visitor(NodeVisitor):
     nodes = filter(bool, children[1:])
     ret = children[0]
     for n in nodes:
-      n.p = ret
+      n.c = ret
       ret = n
     return ret
 
@@ -218,18 +218,19 @@ class Visitor(NodeVisitor):
 
   def visit_select_core(self, node, children):
     selectc, fromc, wherec, gbc = tuple(children[2:])
-    nodes = [fromc, wherec, gbc, selectc]
+    nodes = filter(bool, [fromc, wherec, gbc, selectc])
     ret = None
-    for n in filter(bool, nodes):
+    for n in nodes:
       if not ret: 
         ret = n
       else:
-        n.p = ret
+        n.c = ret
         ret = n
     return ret
 
   def visit_select_results(self, node, children):
     allexprs = flatten(children, 0, 1)
+    print allexprs
     exprs, aliases = zip(*allexprs)
     return Project(None, exprs, aliases)
 
@@ -240,10 +241,10 @@ class Visitor(NodeVisitor):
     return (Star(), None)
 
   def visit_sel_res_val(self, node, children):
-    return (children[0], children[1])
+    return (children[0], children[1] or None)
 
   def visit_sel_res_col(self, node, children):
-    return (children[0], children[1])
+    return (children[0], children[1] or None)
 
 
   #
@@ -283,7 +284,7 @@ class Visitor(NodeVisitor):
     gb = children[2] 
     having = children[3]
     if having:
-      having.p = gb
+      having.c = gb
       return having
     return gb
 

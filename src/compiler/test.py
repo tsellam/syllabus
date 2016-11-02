@@ -55,11 +55,13 @@ if __name__ == "__main__":
     # doesn't run because interpretor doesn't understand From
     print "test3"
     q = """SELECT avg(t.b) AS avg
-           FROM data AS t, data AS b, c AS c, d AS d, e AS e
+           FROM data AS t, data AS b, c AS c, d AS d, e AS e, (SELECT 1 FROM g, h WHERE g.a = h.a) AS f
            WHERE t.a = b.a AND (t.a + b.a) = t.a AND
                  (t.a + d.a) = b.a AND c.a = d.a"""
     o = parse(q)
     optimize(o)
     #run_op(Print(o))
 
+  #test1()
+  #test2()
   test3()

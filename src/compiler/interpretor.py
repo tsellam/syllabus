@@ -23,7 +23,7 @@ def run_op(op, f=lambda t:t):
   if klass == "Print":
     def print_f(tup):
       print tup
-    run_op(op.p, print_f)
+    run_op(op.c, print_f)
 
   elif klass == "Scan":
     for tup in op.data:
@@ -53,7 +53,7 @@ def run_op(op, f=lambda t:t):
         i.i += 1
         f(tup)
       return limit_f
-    run_op(op.p, __f__(I()))
+    run_op(op.c, __f__(I()))
 
   elif klass == "GroupBy":
     hashtable = defaultdict(lambda: [None, None, []])
@@ -62,7 +62,7 @@ def run_op(op, f=lambda t:t):
       hashtable[key][0] = key
       hashtable[key][1] = tup
       hashtable[key][2].append(tup)
-    run_op(op.p, group_f)
+    run_op(op.c, group_f)
 
     for _, (key, tup, group) in hashtable.iteritems():
       tup = dict(tup)
@@ -74,13 +74,13 @@ def run_op(op, f=lambda t:t):
     tup_buffer = []
     def order_f(tup):
       tup_buffer.append(tup)
-    run_op(op.p, order_f)
+    run_op(op.c, order_f)
 
   elif klass == "Filter":
     def where_f(tup):
       if op.cond(tup):
         f(tup)
-    run_op(op.p, where_f)
+    run_op(op.c, where_f)
 
   elif klass == "Project":
     def project_f(tup):
@@ -88,7 +88,7 @@ def run_op(op, f=lambda t:t):
       for exp, alias in zip(op.exprs, op.aliases):
         ret[alias] = exp(tup)
       f(ret)
-    run_op(op.p, project_f)
+    run_op(op.c, project_f)
 
 
 

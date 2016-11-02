@@ -6,7 +6,7 @@ import types
 
 
 
-class Op:
+class Op(object):
   """
   Base class
 
@@ -16,13 +16,40 @@ class Op:
   def __init__(self):
     self.p = None
 
+  def replace(self, newop):
+    if not self.p: return
+    p = self.p
+    if isinstance(p, UnaryOp):
+      p.c = newop
+    if isinstance(p, BinaryOp):
+      if p.l == self:
+        p.l = newop
+      elif p.r == self:
+        p.r = newop
+    if isinstance(p, NaryOp):
+      if self in p.cs:
+        cs[cs.index(self)] = newop
+      p.cs = cs
+
+  def is_ancestor(self, anc):
+    n = self
+    seen = set()
+    while n and n not in seen:
+      seen.add(n)
+      if n == anc:
+        return True
+      n = n.p
+    return False
+
   def children(self):
     """
     Go through all attributes of this object and return those that
     are subclasses of Op
     """
     children = []
-    for attrval in self.__dict__.values():
+    for key, attrval in self.__dict__.iteritems():
+      if key == "p": 
+        continue
       if not isinstance(attrval, list):
         attrval = [attrval]
       for v in attrval:
@@ -43,7 +70,7 @@ class Op:
     if not isinstance(klass_or_names, list):
       klass_or_names = [klass_or_names]
     names = [kn for kn in klass_or_names if isinstance(kn, basestring)]
-    klasses = [kn for kn in klass_or_names if isinstance(kn, types.ClassType)]
+    klasses = [kn for kn in klass_or_names if isinstance(kn, type)]
 
     def f(node):
       if node and (
@@ -62,58 +89,63 @@ class Op:
 
 class UnaryOp(Op):
   def __init__(self, c):
+    super(UnaryOp, self).__init__()
     self.c = c
-    c.p = self
+    if c:
+      c.p = self
 
   def __setattr__(self, attr, v):
-    if attr == "c":
-      self.c = v
+    super(UnaryOp, self).__setattr__(attr, v)
+    if attr == "c" and v:
       self.c.p = self
  
 class BinaryOp(Op):
   def __init__(self, l, r):
+    super(BinaryOp, self).__init__()
     self.l = l
     self.r = r
-    l.p = r.p = self
+    if l:
+      l.p = self
+    if r:
+      r.p = self
 
   def __setattr__(self, attr, v):
-    if attr == "l":
-      self.l = v
-      self.l.p = self
-    if attr == "r":
-      self.r = v
-      self.r.p = self
+    super(BinaryOp, self).__setattr__(attr, v)
+    if attr in ("l", "r") and v:
+      v.p = self
    
 class NaryOp(Op):
-  def __init__(self, children):
-    self.children = children
-    for c in children:
-      c.p = self
+  def __init__(self, cs):
+    super(NaryOp, self).__init__()
+    self.cs = cs
+    for c in cs:
+      if c:
+        c.p = self
 
   def __setattr__(self, attr, v):
-    if attr == "children":
-      self.children = v
-      for c in self.children:
+    super(NaryOp, self).__setattr__(attr, v)
+    if attr == "cs":
+      for c in self.cs:
         c.p = self
  
 class Print(UnaryOp):
   pass
 
-class From(Op):
+class From(NaryOp):
   def __str__(self):
-    arg = ",\n".join(["\t%s" % s for s in self.children])
+    arg = ",\n".join(["\t%s" % s for s in self.cs])
     return "FROM:\n%s" % arg
 
 class Source(UnaryOp):
   pass
 
 class SubQuerySource(Source):
-  def __init__(self, p, alias=None):
-    self.p = p
+  def __init__(self, c, alias=None):
+    super(SubQuerySource, self).__init__(c)
     self.alias = alias 
 
   def __str__(self):
-    return "Source: (%s AS %s)" % (self.p, self.alias)
+    return "Source: (%s AS %s)" % (self.c, self.alias)
 
 class Scan(Source):
   def __init__(self, filename, alias=None):
@@ -162,7 +194,7 @@ class Scan(Source):
     return "Source:(%s AS %s)" % (self.filename, self.alias)
 
       
-class Join(Op):
+class Join(BinaryOp):
   """
   Theta Join
   """
@@ -175,36 +207,35 @@ class Join(Op):
           OR
           an expression
     """
-    self.l = l
-    self.r = r
+    super(Join, self).__init__(l, r)
     self.cond = cond or Bool(True)
 
   def __str__(self):
     return "JOIN:(\n\t%s\n\t%s ON %s)" % (str(self.l), str(self.r), str(self.cond))
 
 
-class GroupBy(Op):
-  def __init__(self, p, group_exprs):
+class GroupBy(UnaryOp):
+  def __init__(self, c, group_exprs):
     """
     @p           parent operator
     @group_exprs list of functions that take the tuple as input and
                  outputs a scalar value
     """
-    self.p = p
+    super(GroupBy, self).__init__(c)
     self.group_exprs = group_exprs
 
   def __str__(self):
-    return "GROUP BY: %s\n%s" % (",".join(map(str, self.group_exprs)), self.p)
+    return "GROUP BY: %s\n%s" % (",".join(map(str, self.group_exprs)), self.c)
 
 
-class OrderBy(Op):
-  def __init__(self, p, order_exprs, ascdesc):
+class OrderBy(UnaryOp):
+  def __init__(self, c, order_exprs, ascdesc):
     """
     @p            parent operator
     @order_exprs  ordered list of function that take the tuple as input 
                   and outputs a scalar value
     """
-    self.p = p
+    super(OrderBy, self).__init__(c)
     self.order_exprs = order_exprs
     self.ascdesc = ascdesc or []
     for i in xrange(len(order_exprs)):
@@ -213,63 +244,68 @@ class OrderBy(Op):
 
 
   def __str__(self):
-    return "ORDER BY: %s\n%s" % (",".join(map(str, self.order_exprs)), self.p)
+    return "ORDER BY: %s\n%s" % (",".join(map(str, self.order_exprs)), self.c)
 
 
 
-class Filter(Op):
-  def __init__(self, p, cond):
+class Filter(UnaryOp):
+  def __init__(self, c, cond):
     """
     @p            parent operator
     @cond         boolean function that takes a tuple as input
     """
-    self.p = p
+    super(Filter, self).__init__(c)
     self.cond = cond
 
   def __str__(self):
-    return "WHERE: %s\n%s" % (str(self.cond), self.p)
+    return "WHERE: %s\n%s" % (str(self.cond), self.c)
 
 
-class Limit(Op):
-  def __init__(self, p, limit):
+class Limit(UnaryOp):
+  def __init__(self, c, limit):
     """
     @p            parent operator
     @limit        number of tuples to return
     """
-    self.p = p
+    super(Limit, self).__init__(c)
     self.limit = limit
 
   def __str__(self):
-    return "LIMIT: %s\n%s" % (self.limit,  self.p)
+    return "LIMIT: %s\n%s" % (self.limit,  self.c)
 
 
-class Project(Op):
-  def __init__(self, p, exprs, aliases=None):
+class Project(UnaryOp):
+  def __init__(self, c, exprs, aliases=None):
     """
     @p            parent operator
     @exprs        list of function that take the tuple as input and
                   outputs a scalar value
     @aliases      name of the fields defined by the above exprs
     """
-    self.p = p
+    super(Project, self).__init__(c)
     self.exprs = exprs
-    self.aliases = aliases or []
+    self.aliases = list(aliases) or []
     self.set_default_aliases()
 
   def set_default_aliases(self):
-    if len(self.aliases) >= len(self.exprs):
+    if len(filter(bool, self.aliases)) >= len(self.exprs):
+      print "aliases"
+      print self.aliases
       self.aliases = self.aliases[:len(self.exprs)]
+      print self.exprs
+      print self.aliases
       return 
 
-    self.aliases += ([None] * len(self.exprs) - len(self.aliases))
+    self.aliases.extend([None] * (len(self.exprs) - len(self.aliases)))
+    print self.aliases
     for i in xrange(len(self.exprs)):
-      if not self.aliases and not isinstance(self.exprs[i], Star):
+      if not self.aliases[i] and not isinstance(self.exprs[i], Star):
         self.aliases[i] = "attr%s" % i 
 
 
   def __str__(self):
     args = ", ".join(["%s AS %s" % (e, a) for (e, a) in  zip(self.exprs, self.aliases)])
-    return "Project: %s\n%s" % (args, str(self.p))
+    return "Project: %s\n%s" % (args, str(self.c))
 
 
 

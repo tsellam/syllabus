@@ -9,19 +9,26 @@ def optimize(op):
   if not op:
     return None
 
-  op = from_expansion(op)
+  while op.collectone("From"):
+    op = from_expansion(op)
+  print op
   return op
 
 def from_expansion(op):
+  """
+  Stupid method that replaces the first From operator with a Join tree
+  """
+  print op
   fromop = op.collectone("From")
   filters = op.collect("Filter")
-  sources = fromop.children
+  filters = filter(lambda f: fromop.is_ancestor(f), filters)
+  sources = fromop.cs
+
 
   sourcealiases = [s.alias for s in sources]
   alias2source = { s.alias: s for s in sources }
-  print "aliases"
-  print sourcealiases
 
+  print "filters", len(filters)
   exprs = []
   for f in filters:
     exprs.extend(f.collect(Expr))
@@ -69,8 +76,6 @@ def from_expansion(op):
         join_op = Join(join_op, alias2source[alias])
 
 
-  print join_op
-
-
+  fromop.replace(join_op)
 
   return op
