@@ -19,7 +19,7 @@ white,,Midterm: closed book,one 8x11 page cheat sheet both sides,,,,,,,
 #ddf9ff,,Physical Design,"Disk storage, Heap Files",https://github.com/w4111/syllabus/blob/master/lectures/lec18.pdf,,,,,,
 #ddf9ff,,Physical Design,"B+Trees, Hash Files, Single operator optimizations",https://github.com/w4111/syllabus/blob/master/lectures/lec19.pdf,,,,,Project 1 Part 3,1
 #ddf9ff,,Query Processing,"Query plans, statistics, join algorithms",https://github.com/w4111/syllabus/blob/master/lectures/lec20.pdf,Chapter 12 (level of detail covered in class),,,,,
-#ddf9ff,,Query Processing,Join algorithms and Selinger,https://github.com/w4111/syllabus/blob/master/lectures/lec21.pdf,Chapter 12 (level of detail covered in class),Access Path Selection in a Relational Database Management System,HW 4<br/>Project 2,1,HW 3 10AM,1
+#ddf9ff,,Query Processing,Join algorithms and Selinger,https://github.com/w4111/syllabus/blob/master/lectures/lec21.pdf,Chapter 12 (level of detail covered in class),Access Path Selection in a Relational Database Management System,"<a href=""https://github.com/w4111/hw4"">HW 4</a><br/><a href=""https://www.instabase.com/ewu/w4111-public/fs/Instabase%20Drive/PROJ2/"">Project 2</a>",1,HW 3 10AM,1
 #ddf9ff,,Transaction Processing,Concurrency Control,,"Chapter 16 (level of detail covered in class). Ignore 16.5, 16.6.",,,,,
 #ddf9ff,,Transaction Processing,Recovery,,"Chapter 16 (level of detail covered in class). Ignore 16.5, 16.6.",,,,,
 white,,Guest Lecture/Review,,,,,,,HW 4 2:30PM,1
