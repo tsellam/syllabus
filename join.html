@@ -1,31 +1,132 @@
 <html>
   <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <style>
+    .row {
+      margin-top: 1em;
+    }
+  </style>
   <body>
     <div class="container">
       <div class="row"><div class="col-md-12">
+        <h3>Join Problem Generator</h3>
+        <div class="row"><div class="col-md-5">
+          Assumptions:
+          <ul>
+            <li>Joins are on the same attribute</li>
+            <li>Join attr is a key in each table</li>
+            <li>Indices are all on this attribute.</li>
+            <li>Joins are not key-foreign key joins</li>
+          </ul>
+          <p>
+            Refresh the page to generate a new problem.
+          </p>
+          <button class="btn primary btn-xlarge" id="btn">Show Answer</button>
+        </div>
+        <div class="col-md-5">
+          <div id="legend">
+            <table class="table table-striped small">
+              <thead>
+                <tr>
+                  <th>Join Name</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Hash-INL</td>
+                  <td>Index nested loops using Hash Index</td>
+                </tr>
+                <tr>
+                  <td>Primary-BTree-INL</td>
+                  <td>Index nested loops using Primary BTree</td>
+                </tr>
+                <tr>
+                  <td>Sec-BTree-INL</td>
+                  <td>Index nested loops using Secondary BTree</td>
+                </tr>
+                <tr>
+                  <td>NL</td>
+                  <td>Nested loops</td>
+                </tr>
+                <tr>
+                  <td>HashJoin</td>
+                  <td>Hash Join</td>
+                </tr>
+              </tbody>
+            </table>
+          </div><!--/legend-->
+        </div> </div>
+      </div> </div>
+
+      <div class="row"><div class="col-md-12">
         <div id="problem"></div>
       </div></div>
-      <div class="row"><div class="col-md-12" style="margin-top: 2em">
-        <button class="btn" id="btn">Show Answer</button>
-        <code id="solution"></code>
-      </div></div>
+      <div class="row sol" style="display:none">
+        <h4>Solutions</h4>
+        <div class="col-md-6" style="">
+          <div id="solution"></div>
+        </div>
+      </div>
     </div>
   </body>
+
+
+
+  <script id="sol-template" type="text/x-handlebars-template">
+    <div class="row"><div class="col-md-12">
+      <code>{{solution}}</code>
+    </div></div>
+    <div class="row"><div class="col-md-12">
+      {{#each joins}}
+        <div class="row">
+          <div class="col-md-6">
+            {{result}} = {{outer}} {{jointype}} {{inner}}
+          </div>
+          <div class="col-md-6">
+            <table class="table small">
+              <tr>
+                <td>Result Cardinality</td>
+                <td><mark>{{cardinality}}</mark></td>
+              </tr>
+              <tr>
+                <td>Estimated Cost</td>
+                <td><mark>{{joincost}}</mark></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      {{/each}}
+
+    </div></div>
+    <div class="row"><div class="col-md-6">
+    </div></div>
+  </script>
   <script id="entry-template" type="text/x-handlebars-template">
     <div class="row">
       <div class="col-md-3">
-        <h3>Stats</h3>
-        <div>Fill Factor: {{stats.fillfactor}}</div>
-        <div>Directory Entry Size: {{stats.desize}} bytes</div>
-        <div>Tuple Size: {{stats.tupsize}} bytes</div>
-        <div>Page Size: {{stats.pagesize}} bytes</div>
+        <h4>Stats</h4>
+        <table class="table small"><tbody>
+          <tr><td>Fill Factor</td><td> <mark>{{stats.fillfactor}}</mark></td></tr>
+          <tr><td><div>Dir Entry Size</td><td> <mark>{{stats.desize}}</mark> bytes</td></tr>
+          <tr><td><div>Tuple Size</td><td> <mark>{{stats.tupsize}}</mark> bytes</td></tr>
+          <tr><td><div>Page Size</td><td> <mark>{{stats.pagesize}}</mark> bytes</td></tr>
+          <tr class="sol" style="display:none">
+            <td>DE/Page</td>
+            <td> <mark>floor(({{stats.pagesize}}*{{stats.fillfactor}}) / {{stats.desize}}) </mark>
+          </td></tr>
+          <tr class="sol" style="display:none">
+            <td> Tups/Page</td>
+            <td> <mark>floor(({{stats.pagesize}}*{{stats.fillfactor}}) / {{stats.tupsize}}) </mark>
+          </td></tr>
+        </tbody></table>
       </div>
-    </div>
-    <div class="row">
       {{#each tables}}
-        <div class="col-md-3">
-          <h3>{{name}}</h3>
-          {{card}} tuples<br/>
+        <div class="col-md-2">
+          <h4>{{name}}</h4>
+          <mark>{{card}}</mark> tuples<br/>
+          <div class="sol" style="display: none">
+            <mark>{{npages}}</mark> pages
+          </div>
           {{#if hash}}hash index<br/>{{/if}}
           {{#if ptree}}primary tree index<br/>{{/if}}
           {{#if stree}}secondary tree index<br/>{{/if}}
@@ -69,13 +170,13 @@
       };
     }
     function genStats() {
-      var tupsize = randItem([8, 32, 128, 512]);
+      var tupsize = randItem([10, 50, 100, 200]);
 
       return {
         fillfactor: randItem([0.25, 0.5, 0.8, 1]),
-        desize: randItem([8]),
+        desize: randItem([5]),
         tupsize: tupsize,
-        pagesize: tupsize * randItem([10, 20, 50, 150, 300])
+        pagesize: tupsize * randItem([5, 10, 20, 50])
       }
     }
     function log(base, y) {
@@ -86,23 +187,28 @@
       _.each(tables, function(t) { accessCosts(t, stats); });
       var seen = { };
       // bestJoin = { outer: , inner: , jointype: ,cost: , card: }
+      var choices = [];
       var bestJoin = {};
       _.each(tables, function(o) {
         _.each(tables, function(i) {
           if (o == i) return;
           var join = joinCost(o, i, stats);
           if (_.isUndefined(bestJoin.cost) || join[1] < bestJoin.cost) {
-            bestJoin.npages = _.min([o.card, i.card]) * stats.tupsize / stats.pagesize
-            bestJoin.outer = o;
-            bestJoin.inner = i;
-            bestJoin.jointype = join[0];
-            bestJoin.cost = join[1];
-            bestJoin.card = _.min([o.card, i.card]);
+            var npages = Math.ceil(_.min([o.card, i.card]) * stats.tupsize / (stats.fillfactor*stats.pagesize));
+            bestJoin = {
+              npages: npages,
+              outer: o,
+              inner: i,
+              jointype: join[0],
+              cost: join[1],
+              card: _.min([o.card, i.card])
+            };
           }
         })
       });
       seen[bestJoin.outer.name] = 1;
       seen[bestJoin.inner.name] = 1;
+      choices.push(bestJoin)
 
       while(_.size(seen) < tables.length) {
         var opts = _.compact(_.map(tables, function(t) {
@@ -120,12 +226,16 @@
           inner: join.inner,
           jointype: join.jointype,
           cost: join.cost,
-          npages: _.min([bestJoin.card, join.inner.card]) * stats.tupsize / stats.pagesize,
+          npages: Math.ceil(_.min([bestJoin.card, join.inner.card]) * stats.tupsize / (stats.fillfactor*stats.pagesize)),
           card: _.min([bestJoin.card, join.inner.card])
         };
+        choices.push(_.clone(bestJoin));
         seen[join.inner.name] = 1;
       }
-      return bestJoin;
+      return {
+        bestJoin: bestJoin,
+        choices: choices
+      };
     }
 
     function linearizeJoinTree(tree) {
@@ -140,18 +250,18 @@
     }
 
     function accessCosts(t, stats) {
-      t.card = t.npages * stats.pagesize / stats.tupsize;
+      t.card = Math.floor(t.npages * (stats.fillfactor*stats.pagesize) / stats.tupsize);
       if (t.hash) {
         t.hashCost = 1;
       }
       if (t.ptree) {
-        var height = Math.ceil(log(stats.pagesize/stats.desize, t.npages));
+        var height = Math.ceil(log((stats.fillfactor*stats.pagesize)/stats.desize, t.npages));
         t.ptreeCost = height + 1;
       }
       if (t.stree) {
-        var tupsperpage = stats.pagesize / stats.tupsize;
-        var desperpage = stats.pagesize / stats.desize;
-        var height = Math.ceil(log(stats.pagesize/stats.desize, t.npages*tupsperpage/desperpage));
+        var tupsperpage = Math.floor((stats.fillfactor*stats.pagesize) / stats.tupsize);
+        var desperpage = Math.floor((stats.fillfactor*stats.pagesize) / stats.desize);
+        var height = Math.ceil(log(desperpage, Math.ceil(t.npages*tupsperpage/desperpage)));
         t.ptreeCost = height + 1 + 1;
       }
     }
@@ -162,14 +272,15 @@
         ['Primary-BTree-INL', inner['ptreeCost']],
         ['Sec-BTree-INL', inner['streeCost']],
         ['NL', inner['npages']],
-        //['HashJoin', 1]
+        ['HashJoin', 1]
       ];
+      var outerCost = outer.cost || outer.npages;
       pairs = _.reject(pairs, function(p) { return _.isNaN(p[1]) || _.isUndefined(p[1]); });
       pairs = _.map(pairs, function(p) {
         if (p[0] == 'HashJoin') {
-          return [p[0], outer.npages + inner.npages + outer.card * p[1]];
+          return [p[0], outerCost + inner.npages + outer.card * p[1]];
         }
-        return [p[0], outer.npages + outer.card * p[1]];
+        return [p[0], outerCost + outer.card * p[1]];
       })
       var ret = _.min(pairs, function(p) { return p[1]; });
       return ret;
@@ -180,29 +291,56 @@
       var stats = genStats();
 
 
-      var tree = solve(tables, stats);
-      var joins = linearizeJoinTree(tree)
+      var solution = solve(tables, stats);
+      var tree = solution.bestJoin;
+      var choices = solution.choices; //linearizeJoinTree(tree)
 
-      var source   = $("#entry-template").html();
-      var template = Handlebars.compile(source);
-      $("#problem").html(template({
+      $("#problem").html(genHTML("#entry-template", {
         tables: tables,
         stats: stats
       }));
 
-      $("#btn").click(function() {
-        var s = [_.times(Math.floor(joins.length/2.0), function() { return "(" }).join("")];
-        _.each(joins, function(v, idx) {
-          s.push(v);
-          if (idx > 0  && idx % 2 == 0) 
-            s.push(")");
-        });
-        $("#solution").text(s.join(" "))
+      var joinStr = [choices[0].outer.name];
+      _.each(choices, function(choice) {
+        joinStr.push([
+          " ", choice.jointype, " ", choice.inner.name, ") "
+        ]);
+      });
+      joinStr.unshift(_.times(choices.length, function(){return "("}));
+      joinStr = _.flatten(joinStr).join("");
 
+      var joins = [];
+      _.each(choices, function(choice, idx) {
+        var outer = "R"+idx;
+        if (idx == 0) outer = choice.outer.name;
+        joins.push({
+          result: "R"+(idx+1),
+          outer: outer,
+          inner: choice.inner.name,
+          jointype: choice.jointype,
+          cardinality: choice.card,
+          joincost: choice.cost
+        });
+      });
+
+      $("#btn").click(function() {
+        $("#solution").html(genHTML("#sol-template", {
+          solution: joinStr,
+          card: tree.card,
+          cost: tree.cost,
+          joins: joins
+        }));
+        $(".sol").toggle();
       })
+      //$("#btn").click()
         
     }
 
+    function genHTML(elid, data) {
+      var source   = $(elid).html();
+      var template = Handlebars.compile(source);
+      return template(data);
+    }
 
     genProblem()
   </script>
