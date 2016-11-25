@@ -1,0 +1,209 @@
+<html>
+  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <body>
+    <div class="container">
+      <div class="row"><div class="col-md-12">
+        <div id="problem"></div>
+      </div></div>
+      <div class="row"><div class="col-md-12" style="margin-top: 2em">
+        <button class="btn" id="btn">Show Answer</button>
+        <code id="solution"></code>
+      </div></div>
+    </div>
+  </body>
+  <script id="entry-template" type="text/x-handlebars-template">
+    <div class="row">
+      <div class="col-md-3">
+        <h3>Stats</h3>
+        <div>Fill Factor: {{stats.fillfactor}}</div>
+        <div>Directory Entry Size: {{stats.desize}} bytes</div>
+        <div>Tuple Size: {{stats.tupsize}} bytes</div>
+        <div>Page Size: {{stats.pagesize}} bytes</div>
+      </div>
+    </div>
+    <div class="row">
+      {{#each tables}}
+        <div class="col-md-3">
+          <h3>{{name}}</h3>
+          {{card}} tuples<br/>
+          {{#if hash}}hash index<br/>{{/if}}
+          {{#if ptree}}primary tree index<br/>{{/if}}
+          {{#if stree}}secondary tree index<br/>{{/if}}
+        </div>
+      {{/each}}
+    </div>
+  </script>
+
+  <script src="./lib/underscore.js"></script>
+  <script src="./lib/jquery.js"></script>
+  <script src="./lib/handlebars.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script>
+
+    function randInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    function randBool() {
+      return Math.random() >= 0.5;
+    }
+    function randExp() {
+      return Math.pow(10, randInt(1, 6));
+    }
+    function randItem(arr) {
+      return arr[randInt(0, arr.length-1)];
+    }
+
+    function genTable(name) {
+      var bHash = randBool();
+      var bPBtree = randBool();
+      var bSBtree = randBool();
+      return {
+        name: name,
+        npages: randExp(),
+        hash: bHash,
+        ptree: bPBtree,
+        stree: bSBtree
+      };
+    }
+    function genStats() {
+      var tupsize = randItem([8, 32, 128, 512]);
+
+      return {
+        fillfactor: randItem([0.25, 0.5, 0.8, 1]),
+        desize: randItem([8]),
+        tupsize: tupsize,
+        pagesize: tupsize * randItem([10, 20, 50, 150, 300])
+      }
+    }
+    function log(base, y) {
+      return Math.log(y) / Math.log(base);
+    }
+
+    function solve(tables, stats) {
+      _.each(tables, function(t) { accessCosts(t, stats); });
+      var seen = { };
+      // bestJoin = { outer: , inner: , jointype: ,cost: , card: }
+      var bestJoin = {};
+      _.each(tables, function(o) {
+        _.each(tables, function(i) {
+          if (o == i) return;
+          var join = joinCost(o, i, stats);
+          if (_.isUndefined(bestJoin.cost) || join[1] < bestJoin.cost) {
+            bestJoin.npages = _.min([o.card, i.card]) * stats.tupsize / stats.pagesize
+            bestJoin.outer = o;
+            bestJoin.inner = i;
+            bestJoin.jointype = join[0];
+            bestJoin.cost = join[1];
+            bestJoin.card = _.min([o.card, i.card]);
+          }
+        })
+      });
+      seen[bestJoin.outer.name] = 1;
+      seen[bestJoin.inner.name] = 1;
+
+      while(_.size(seen) < tables.length) {
+        var opts = _.compact(_.map(tables, function(t) {
+          if (t.name in seen) return;
+          var cost = joinCost(bestJoin, t, stats);
+          return {
+            inner: t,
+            jointype: cost[0],
+            cost: cost[1]
+          };
+        }));
+        var join = _.min(opts, function(join) { return join.cost; });
+        bestJoin = {
+          outer: bestJoin,
+          inner: join.inner,
+          jointype: join.jointype,
+          cost: join.cost,
+          npages: _.min([bestJoin.card, join.inner.card]) * stats.tupsize / stats.pagesize,
+          card: _.min([bestJoin.card, join.inner.card])
+        };
+        seen[join.inner.name] = 1;
+      }
+      return bestJoin;
+    }
+
+    function linearizeJoinTree(tree) {
+      var ret = [];
+      while (!_.isUndefined(tree) && tree.inner) {
+        ret.push(tree.inner.name)
+        ret.push(tree.jointype)
+        tree = tree.outer;
+      }
+      ret.push(tree.name);
+      return ret.reverse()
+    }
+
+    function accessCosts(t, stats) {
+      t.card = t.npages * stats.pagesize / stats.tupsize;
+      if (t.hash) {
+        t.hashCost = 1;
+      }
+      if (t.ptree) {
+        var height = Math.ceil(log(stats.pagesize/stats.desize, t.npages));
+        t.ptreeCost = height + 1;
+      }
+      if (t.stree) {
+        var tupsperpage = stats.pagesize / stats.tupsize;
+        var desperpage = stats.pagesize / stats.desize;
+        var height = Math.ceil(log(stats.pagesize/stats.desize, t.npages*tupsperpage/desperpage));
+        t.ptreeCost = height + 1 + 1;
+      }
+    }
+
+    function joinCost(outer, inner, stats) {
+      var pairs = [
+        ['Hash-INL', inner['hashCost']],
+        ['Primary-BTree-INL', inner['ptreeCost']],
+        ['Sec-BTree-INL', inner['streeCost']],
+        ['NL', inner['npages']],
+        //['HashJoin', 1]
+      ];
+      pairs = _.reject(pairs, function(p) { return _.isNaN(p[1]) || _.isUndefined(p[1]); });
+      pairs = _.map(pairs, function(p) {
+        if (p[0] == 'HashJoin') {
+          return [p[0], outer.npages + inner.npages + outer.card * p[1]];
+        }
+        return [p[0], outer.npages + outer.card * p[1]];
+      })
+      var ret = _.min(pairs, function(p) { return p[1]; });
+      return ret;
+    }
+
+    function genProblem() {
+      var tables = _.times(4, function(i) { return genTable("T"+i); });
+      var stats = genStats();
+
+
+      var tree = solve(tables, stats);
+      var joins = linearizeJoinTree(tree)
+
+      var source   = $("#entry-template").html();
+      var template = Handlebars.compile(source);
+      $("#problem").html(template({
+        tables: tables,
+        stats: stats
+      }));
+
+      $("#btn").click(function() {
+        var s = [_.times(Math.floor(joins.length/2.0), function() { return "(" }).join("")];
+        _.each(joins, function(v, idx) {
+          s.push(v);
+          if (idx > 0  && idx % 2 == 0) 
+            s.push(")");
+        });
+        $("#solution").text(s.join(" "))
+
+      })
+        
+    }
+
+
+    genProblem()
+  </script>
+</html>
