@@ -185,8 +185,12 @@
     }
 
     function solve(tables, stats) {
+
+      // compute access path costs 
       _.each(tables, function(t) { accessCosts(t, stats); });
+
       var seen = { };
+
       // bestJoin has the following structure:
       //    { outer: , inner: , jointype: ,cost: , card: }
       // where outer could be another join
