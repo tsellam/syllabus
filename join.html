@@ -172,14 +172,14 @@
         stree: bSBtree
       };
     }
-    function genStats() {
-      var tupsize = randItem([10, 50, 100, 200]);
+    function genStats(opts) {
+      var tupsize = randItem(opts.tupsizes);
 
       return {
-        fillfactor: randItem([0.25, 0.5, 0.8, 1]),
-        desize: randItem([5]),
+        fillfactor: randItem(opts.fillfactors),
+        desize: randItem(opts.desizes),
         tupsize: tupsize,
-        pagesize: tupsize * randItem([5, 10, 20, 50])
+        pagesize: tupsize * randItem(opts.tupsperpage)
       }
     }
     function log(base, y) {
@@ -302,9 +302,9 @@
       }
     }
 
-    function genProblem() {
-      var tables = _.times(4, function(i) { return genTable("T"+(i+1)); });
-      var stats = genStats();
+    function genProblem(opts) {
+      var tables = _.times(4, function(i) { return genTable("T"+(i+1), opts); });
+      var stats = genStats(opts);
 
       var solution = solve(tables, stats);
       var tree = solution.bestJoin;
@@ -371,6 +371,14 @@
       return template(data);
     }
 
-    genProblem()
+    $(function() {
+      var opts = {
+        tupsizes: [10, 50, 100, 200],
+        fillfactors: [0.25, 0.5, 0.8, 1],
+        desizes: [5],
+        tupsperpage: [2, 5, 10, 20, 50]
+      }
+      genProblem(opts)
+    });
   </script>
 </html>
