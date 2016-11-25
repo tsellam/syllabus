@@ -11,14 +11,17 @@
       <div class="row"><div class="col-md-12">
         <h3>Join Problem Generator</h3>
         <div class="row"><div class="col-md-5">
-          Pick the appropriate join plan given the statistics and tables below. 
+          This page generates simple (in terms of setup and assumptions) 4-way join optimization problems.  
+          Given the statistics and tables below, compute the join plan based on Selinger as discussed in class,
+          the result cardinality, as well as the cost in terms of the number of pages that must be read. 
           Assumptions:
           <ul>
+            <li>Restricted to the join options in the table on the right</li>
             <li>Joins are on the same attribute</li>
             <li>Join attr is a key in each table</li>
             <li>Indices are all on this attribute.</li>
             <li>Joins are not key-foreign key joins</li>
-            <li>There's no cache</li>
+            <li>There's no cache, so each page must be accessed from disk.</li>
           </ul>
           <p>
             Refresh the page to generate a new problem.
