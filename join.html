@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <div class="row"><div class="col-md-12">
-        <h3>Join Problem Generator</h3>
+        <h3>Join Problem Generator <small>Refresh for new problem</small></h3>
         <div class="row"><div class="col-md-5">
           This page generates simple (in terms of setup and assumptions) 4-way join optimization problems.  
           Given the statistics and tables below, compute the join plan based on Selinger as discussed in class,
@@ -23,10 +23,7 @@
             <li>Joins are not key-foreign key joins</li>
             <li>There's no cache, so each page must be accessed from disk.</li>
           </ul>
-          <p>
-            Refresh the page to generate a new problem.
-          </p>
-          <button class="btn primary btn-xlarge" id="btn">Show Answer</button>
+          <button class="btn primary btn-xlarge" id="btn">Click to Toggle Answer</button>
         </div>
         <div class="col-md-5">
           <div id="legend">
