@@ -25,7 +25,7 @@
         </div>
         <div class="col-md-5">
           <div id="legend">
-            <table class="table table-striped small">
+            <table class="table table-striped condensed small">
               <thead>
                 <tr>
                   <th>Join Name</th>
@@ -84,7 +84,7 @@
             {{result}} = {{outer}} {{jointype}} {{inner}}
           </div>
           <div class="col-md-6">
-            <table class="table small">
+            <table class="table condensed small">
               <tr>
                 <td>Result Cardinality</td>
                 <td><mark>{{cardinality}}</mark></td>
@@ -106,7 +106,7 @@
     <div class="row">
       <div class="col-md-3">
         <h4>Stats</h4>
-        <table class="table small"><tbody>
+        <table class="table condensed small"><tbody>
           <tr><td>Fill Factor</td><td> <mark>{{stats.fillfactor}}</mark></td></tr>
           <tr><td><div>Dir Entry Size</td><td> <mark>{{stats.desize}}</mark> bytes</td></tr>
           <tr><td><div>Tuple Size</td><td> <mark>{{stats.tupsize}}</mark> bytes</td></tr>
@@ -187,23 +187,23 @@
     function solve(tables, stats) {
       _.each(tables, function(t) { accessCosts(t, stats); });
       var seen = { };
-      // bestJoin = { outer: , inner: , jointype: ,cost: , card: }
-      var choices = [];
+      // bestJoin has the following structure:
+      //    { outer: , inner: , jointype: ,cost: , card: }
+      // where outer could be another join
       var bestJoin = {};
+
+      // keep track of the sequence of joins that we pick
+      var choices = [];
+
+      // Pick the starting Join
       _.each(tables, function(o) {
         _.each(tables, function(i) {
           if (o == i) return;
           var join = joinCost(o, i, stats);
-          if (_.isUndefined(bestJoin.cost) || join[1] < bestJoin.cost) {
+          if (_.isUndefined(bestJoin.cost) || join.cost < bestJoin.cost) {
             var npages = Math.ceil(_.min([o.card, i.card]) * stats.tupsize / (stats.fillfactor*stats.pagesize));
-            bestJoin = {
-              npages: npages,
-              outer: o,
-              inner: i,
-              jointype: join[0],
-              cost: join[1],
-              card: _.min([o.card, i.card])
-            };
+            join.npages = npages;
+            bestJoin = join;
           }
         })
       });
@@ -211,23 +211,23 @@
       seen[bestJoin.inner.name] = 1;
       choices.push(bestJoin)
 
+      // Grow the left-deep join
       while(_.size(seen) < tables.length) {
+        // compute cost of every possible inner table
         var opts = _.compact(_.map(tables, function(t) {
           if (t.name in seen) return;
-          var cost = joinCost(bestJoin, t, stats);
-          return {
-            inner: t,
-            jointype: cost[0],
-            cost: cost[1]
-          };
+          return joinCost(bestJoin, t, stats);
         }));
+
         var join = _.min(opts, function(join) { return join.cost; });
+        var mincard = _.min([bestJoin.card, join.inner.card]);
+        var npages = Math.ceil(mincard * stats.tupsize / (stats.fillfactor*stats.pagesize));
         bestJoin = {
           outer: bestJoin,
           inner: join.inner,
           jointype: join.jointype,
           cost: join.cost,
-          npages: Math.ceil(_.min([bestJoin.card, join.inner.card]) * stats.tupsize / (stats.fillfactor*stats.pagesize)),
+          npages: npages,
           card: _.min([bestJoin.card, join.inner.card])
         };
         choices.push(_.clone(bestJoin));
@@ -250,8 +250,10 @@
       return ret.reverse()
     }
 
+
     function accessCosts(t, stats) {
       t.card = Math.floor(t.npages * (stats.fillfactor*stats.pagesize) / stats.tupsize);
+
       if (t.hash) {
         t.hashCost = 1;
       }
@@ -267,6 +269,7 @@
       }
     }
 
+    // Estimate the join costs
     function joinCost(outer, inner, stats) {
       var pairs = [
         ['Hash-INL', inner['hashCost']],
@@ -284,23 +287,38 @@
         return [p[0], outerCost + outer.card * p[1]];
       })
       var ret = _.min(pairs, function(p) { return p[1]; });
-      return ret;
+      return {
+        inner: inner,
+        outer: outer,
+        jointype: ret[0],
+        cost: ret[1],
+        card: _.min([outer.card, inner.card])
+      }
     }
 
     function genProblem() {
       var tables = _.times(4, function(i) { return genTable("T"+i); });
       var stats = genStats();
 
-
       var solution = solve(tables, stats);
       var tree = solution.bestJoin;
       var choices = solution.choices; //linearizeJoinTree(tree)
 
+
+      //
+      // 1. Render the problem 
+      //
       $("#problem").html(genHTML("#entry-template", {
         tables: tables,
         stats: stats
       }));
 
+
+      //
+      // 2. Render the solutions
+      //
+
+      // 2.1 generate the string representation of the join plan
       var joinStr = [choices[0].outer.name];
       _.each(choices, function(choice) {
         joinStr.push([
@@ -310,6 +328,7 @@
       joinStr.unshift(_.times(choices.length, function(){return "("}));
       joinStr = _.flatten(joinStr).join("");
 
+      // 2.2 generate a list of the joins
       var joins = [];
       _.each(choices, function(choice, idx) {
         var outer = "R"+idx;
@@ -324,19 +343,22 @@
         });
       });
 
+      $("#solution").html(genHTML("#sol-template", {
+        solution: joinStr,
+        card: tree.card,
+        cost: tree.cost,
+        joins: joins
+      }));
+
+      // instrument the button to toggle the solutions
       $("#btn").click(function() {
-        $("#solution").html(genHTML("#sol-template", {
-          solution: joinStr,
-          card: tree.card,
-          cost: tree.cost,
-          joins: joins
-        }));
         $(".sol").toggle();
       })
       //$("#btn").click()
         
     }
 
+    // helper to make using handlerbars easier
     function genHTML(elid, data) {
       var source   = $(elid).html();
       var template = Handlebars.compile(source);
