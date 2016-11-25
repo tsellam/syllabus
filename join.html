@@ -17,6 +17,7 @@
             <li>Join attr is a key in each table</li>
             <li>Indices are all on this attribute.</li>
             <li>Joins are not key-foreign key joins</li>
+            <li>There's no cache</li>
           </ul>
           <p>
             Refresh the page to generate a new problem.
@@ -301,7 +302,7 @@
     }
 
     function genProblem() {
-      var tables = _.times(4, function(i) { return genTable("T"+i); });
+      var tables = _.times(4, function(i) { return genTable("T"+(i+1)); });
       var stats = genStats();
 
       var solution = solve(tables, stats);
