@@ -104,6 +104,10 @@
         nopts:5 
       }
       genProblem(opts);
+      $("#btn").click(function() {
+        $(".sol").toggle();
+      })
+
       $("#btn-gen").click(function() {
         var o = _.clone(opts);
         if (_.isFinite(Number.parseInt($("#nobjs").val()))) 
@@ -112,6 +116,7 @@
           o.nopts = Number.parseInt($("#nopts").val());
         console.log(JSON.stringify(o))
         genProblem(o)
+
 
       });
     });
