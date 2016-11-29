@@ -1,0 +1,111 @@
+<html>
+  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <style>
+    .row {
+      margin-top: 1em;
+    }
+  </style>
+
+  <body>
+    <div class="container">
+      <div class="row"><div class="col-md-12">
+        <h3>Concurrency Problem Generator <small>Refresh for new problem</small></h3>
+        <div class="row"><div class="col-md-7">
+          <p>
+          This page generates simple concurrency control schedules and asks you about their properties
+          </p>
+          Assumptions:
+          <button class="btn btn-primary btn-lg" id="btn">Click to Toggle Answer</button>
+        </div>
+      </div> </div>
+
+      <div class="row"><div class="col-md-12">
+        <div id="problem"></div>
+      </div></div>
+      <div class="row sol" style="display:none">
+        <h4>Solutions</h4>
+        <div class="col-md-12" style="">
+          <div id="solution"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12"><center>Designed for the simplified query optimization lectures in Columbia's <a href="http://cs.columbia.edu/~coms4111/ewu.html">W4111 Fall 2016</a></center></div>
+    </div>
+  </body>
+
+
+
+  <script id="sol-template" type="text/x-handlebars-template">
+    <div class="row"><div class="col-md-12">
+      <!--<code class="lead">{{solution}}</code>-->
+    </div></div>
+    <div class="row"><div class="col-md-10">
+        <table class="table"><tbody>
+          <tr><td>Is Serializable?</td><td>{{isSerializable}}</td></tr>
+          <tr><td>Is Conflict Serializable?</td><td>{{isConflictSerializable}}</td></tr>
+          <tr><td>Is Strict 2PL? <small>(Assuming COMMIT immediately after last operation)</small></td><td>{{isS2PL}}</td></tr>
+        </tbody></table>
+    </div></div>
+  </script>
+  <script id="schedule-template" type="text/x-handlebars-template">
+    <div class="row">
+      <div class="col-md-5">
+        <p>Please decide if the schedule is the following</p>
+        <ol>
+          <li>Serializable
+          <li>Conflict Serializable
+          <li>Allowed by Strict 2PL
+        </ol>
+        <p>Also, identify the anomalies present in the schedule (we don't have solutions for these)</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-5">
+        {{#each schedules}}
+        <table class="table">
+          <tbody>
+          {{#each this}}
+            <tr>
+              <td>{{this.0.xact}}</td>
+              {{#each this}}
+              <td>{{#if this.op}} {{op}}({{obj}}{{#if this.val}}={{val}}{{/if}}) {{/if}}</td>
+              {{/each}}
+            </tr>
+          {{/each}}
+          </tbody>
+        </table>
+        {{/each}}
+      </div>
+    </div>
+  </script>
+
+  <script src="./lib/underscore.js"></script>
+  <script src="./lib/jquery.js"></script>
+  <script src="./lib/handlebars.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="./lib/concurrency.js"></script>
+  <script>
+    $(function() {
+      var opts = {
+        nobjs: 2,
+        nopts: 3
+      }
+      genProblem(opts)
+    });
+  </script>
+</html>
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-67363085-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
