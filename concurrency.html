@@ -9,12 +9,23 @@
   <body>
     <div class="container">
       <div class="row"><div class="col-md-12">
-        <h3>Concurrency Problem Generator <small>Refresh for new problem</small></h3>
+        <h3>Concurrency Problem Generator </h3>
         <div class="row"><div class="col-md-7">
           <p>
           This page generates simple concurrency control schedules and asks you about their properties
           Please note that these are just to help generate schedules for you to analyze, you should also understand the concepts themselves!
           </p>
+        </div> </div>
+        <div class="row"><div class="col-md-5">
+          <table class="table"><tbody>
+            <tr>
+              <td>Num Objects</td><td><input id="nobjs" value="2"/></td>
+            </tr>
+            <tr>
+              <td>Max num Operations per Xact</td><td><input id="nopts" value="5"/></td>
+            </tr>
+          </tbody></table>
+          <button class="btn btn-primary btn-lg" id="btn-gen">Gen Problem</button>
           <button class="btn btn-primary btn-lg" id="btn">Click to Toggle Answer</button>
         </div>
       </div> </div>
@@ -90,9 +101,19 @@
     $(function() {
       var opts = {
         nobjs: 2,
-        nopts: 3
+        nopts:5 
       }
-      genProblem(opts)
+      genProblem(opts);
+      $("#btn-gen").click(function() {
+        var o = _.clone(opts);
+        if (_.isFinite(Number.parseInt($("#nobjs").val()))) 
+          o.nobjs = Number.parseInt($("#nobjs").val());
+        if (_.isFinite(Number.parseInt($("#nopts").val()))) 
+          o.nopts = Number.parseInt($("#nopts").val());
+        console.log(JSON.stringify(o))
+        genProblem(o)
+
+      });
     });
   </script>
 </html>
