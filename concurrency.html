@@ -98,6 +98,27 @@
   <script src="lib/bootstrap.min.js"></script>
   <script src="./lib/concurrency.js"></script>
   <script>
+    function test() {
+      var s = [
+      { xact: "T1", obj: "C", op: "W", val: null }
+      ,{ xact: "T2", obj: "A", op: "R", val: null }
+      ,{ xact: "T2", obj: "B", op: "W", val: null }
+      ,{ xact: "T2", obj: "B", op: "W", val: null }
+      ,{ xact: "T1", obj: "A", op: "R", val: null }
+      ,{ xact: "T1", obj: "A", op: "R", val: null }
+      ,{ xact: "T2", obj: "A", op: "W", val: null }
+      ,{ xact: "T1", obj: "C", op: "R", val: null }
+      ]
+      var s = [
+      { xact: "T1", obj: "A", op: "W", val: null }
+      ,{ xact: "T2", obj: "A", op: "R", val: null }
+      ,{ xact: "T2", obj: "B", op: "W", val: null }
+      ,{ xact: "T2", obj: "B", op: "W", val: null }
+      ]
+
+
+      console.log(isS2PL(s));
+    };
     $(function() {
       var opts = {
         nobjs: 2,
@@ -119,6 +140,7 @@
 
 
       });
+
     });
   </script>
 </html>
