@@ -1,0 +1,1 @@
+http://tatiyants.com/postgres-query-plan-visualization/
